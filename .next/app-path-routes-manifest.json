@@ -1,0 +1,22 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/about/page": "/about",
+  "/activities/[slug]/page": "/activities/[slug]",
+  "/activities/page": "/activities",
+  "/booking-and-payment/page": "/booking-and-payment",
+  "/contact/page": "/contact",
+  "/gallery/[slug]/page": "/gallery/[slug]",
+  "/gallery/page": "/gallery",
+  "/general-information/page": "/general-information",
+  "/hotels/[slug]/page": "/hotels/[slug]",
+  "/hotels/page": "/hotels",
+  "/page": "/",
+  "/payment/page": "/payment",
+  "/services/page": "/services",
+  "/team/page": "/team",
+  "/testimonials/page": "/testimonials",
+  "/tours/[slug]/page": "/tours/[slug]",
+  "/tours/page": "/tours",
+  "/why-travel-with-us/page": "/why-travel-with-us"
+}

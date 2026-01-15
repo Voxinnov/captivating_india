@@ -1,0 +1,64 @@
+import Navigation from '@/components/navigation'
+import Footer from '@/components/footer'
+import { GALLERY_CATEGORIES } from '@/lib/gallery'
+import Link from 'next/link'
+
+export default function GalleryPage() {
+  return (
+    <main className="w-full bg-background">
+      <Navigation />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden flex items-center min-h-[260px] md:min-h-[360px]">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/rithudmc-keralabackwaters-kumarakom-9085.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-black/45" />
+
+        <div className="relative w-full py-16 md:py-20 lg:py-24">
+          <div className="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center text-center space-y-3">
+            <h1 className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/70">
+              Gallery
+            </h1>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white tracking-tight">
+              Image Gallery
+            </h2>
+          </div>
+        </div>
+      </section>
+
+      {/* Category tiles – like the reference gallery grid */}
+      <section className="py-10 md:py-14 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/40">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {GALLERY_CATEGORIES.map((category) => (
+              <Link
+                key={category.slug}
+                href={`/gallery/${category.slug}`}
+                className="group overflow-hidden rounded-xl bg-background shadow-sm hover:shadow-lg border border-border/70 transition-shadow"
+              >
+                <div className="relative h-40 md:h-44 lg:h-48 overflow-hidden">
+                  <img
+                    src={category.coverImage || '/placeholder.jpg'}
+                    alt={category.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                </div>
+                <div className="bg-white px-3 md:px-4 py-2">
+                  <p className="text-[11px] md:text-xs font-medium tracking-wide text-muted-foreground">
+                    {category.title}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  )
+}
+
+

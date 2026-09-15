@@ -16,6 +16,8 @@
   "/services/page": "app/services/page.js",
   "/team/page": "app/team/page.js",
   "/testimonials/page": "app/testimonials/page.js",
+  "/themes/[slug]/page": "app/themes/[slug]/page.js",
+  "/themes/page": "app/themes/page.js",
   "/tours/[slug]/page": "app/tours/[slug]/page.js",
   "/tours/page": "app/tours/page.js",
   "/why-travel-with-us/page": "app/why-travel-with-us/page.js"

@@ -18,8 +18,9 @@ class DestinationController extends Controller
                     'title' => $destination->title,
                     'slug' => $destination->slug,
                     'description' => $destination->description,
-                    'image' => $destination->image ? asset('storage/' . $destination->image) : null,
+                    'image' => $destination->image_url,
                     'long_description' => $destination->long_description,
+                    'highlights' => $destination->highlights,
                 ];
             });
 
@@ -28,7 +29,7 @@ class DestinationController extends Controller
 
     public function show($slug)
     {
-        $destination = Destination::where('slug', $slug)->first();
+        $destination = Destination::with(['activities.place', 'places'])->where('slug', $slug)->first();
 
         if (!$destination) {
             return response()->json(['message' => 'Destination not found'], 404);
@@ -40,8 +41,23 @@ class DestinationController extends Controller
                 'title' => $destination->title,
                 'slug' => $destination->slug,
                 'description' => $destination->description,
-                'image' => $destination->image ? asset('storage/' . $destination->image) : null,
+                'image' => $destination->image_url,
                 'long_description' => $destination->long_description,
+                'highlights' => $destination->highlights,
+                'places' => $destination->places->map(fn($p) => [
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'slug' => $p->slug,
+                ]),
+                'activities' => $destination->activities->map(fn($a) => [
+                    'id' => $a->id,
+                    'title' => $a->title,
+                    'slug' => $a->slug,
+                    'place_id' => $a->place_id,
+                    'location' => $a->place ? $a->place->title : null,
+                    'description' => $a->description,
+                    'image' => $a->image_url,
+                ]),
             ]
         ]);
     }

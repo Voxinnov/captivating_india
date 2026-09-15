@@ -16,6 +16,7 @@ class Destination extends Model
         'description',
         'image',
         'long_description',
+        'highlights',
         'is_featured',
         'order',
     ];
@@ -24,7 +25,36 @@ class Destination extends Model
     {
         return [
             'is_featured' => 'boolean',
+            'highlights' => 'array',
         ];
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function places()
+    {
+        return $this->hasMany(Place::class);
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        if (str_starts_with($this->image, 'images/')) {
+            return '/' . $this->image;
+        }
+
+        return asset('storage/' . $this->image);
     }
 }
 

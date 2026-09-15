@@ -1,110 +1,145 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
-import { HOTELS } from '@/lib/hotels'
-import { notFound } from 'next/navigation'
+import { Hotel } from '@/lib/hotels'
+import { formatHtmlContent } from '@/lib/utils'
 
-type HotelDetailPageProps = {
-  // In Next 16, params is a Promise in RSC routes
-  params: Promise<{
-    slug: string
-  }>
-}
+export default function HotelDetailPage() {
+  const params = useParams()
+  const slug = params?.slug as string
 
-// Needed for static export with dynamic segment
-export function generateStaticParams() {
-  return HOTELS.map((hotel) => ({
-    slug: hotel.slug,
-  }))
-}
+  const [hotel, setHotel] = useState<Hotel | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
 
-export default async function HotelDetailPage({ params }: HotelDetailPageProps) {
-  const { slug } = await params
-  const hotel = HOTELS.find((h) => h.slug === slug)
+  useEffect(() => {
+    if (!slug) return
+    const fetchHotel = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+        const response = await fetch(`${apiUrl}/api/v1/hotels/${slug}`)
+        if (response.ok) {
+          const json = await response.json()
+          if (json.data) {
+            setHotel(json.data)
+          } else {
+            setNotFound(true)
+          }
+        } else {
+          setNotFound(true)
+        }
+      } catch (error) {
+        console.error('Failed to fetch hotel details:', error)
+        setNotFound(true)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchHotel()
+  }, [slug])
 
-  if (!hotel) {
-    notFound()
-  }
-
-  const titleWithLocation = `${hotel.name}, ${hotel.location}`
+  const gallery = hotel?.gallery ?? []
 
   return (
     <main className="w-full bg-background">
       <Navigation />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden flex items-center min-h-[260px] md:min-h-[360px]">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${hotel.image || '/placeholder.jpg'}')` }}
-        />
-        <div className="absolute inset-0 bg-black/45" />
+      {/* Hero – tall banner matching listing pages */}
+      <section className="relative overflow-hidden flex items-center min-h-[360px] md:min-h-[600px]">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          {hotel?.image ? (
+            <img
+              src={hotel.image}
+              alt={hotel.name}
+              className="w-full h-full object-cover object-center"
+            />
+          ) : (
+            <div className="w-full h-full bg-muted animate-pulse" />
+          )}
+        </div>
 
-        <div className="relative w-full py-16 md:py-20 lg:py-24">
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50" />
+
+        {/* Text */}
+        <div className="relative w-full py-20 md:py-28 lg:py-32">
           <div className="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center text-center space-y-3">
-            <h1 className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/70">
-              Hotel
-            </h1>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white tracking-tight">
-              {titleWithLocation}
-            </h2>
+            {isLoading ? (
+              <>
+                <div className="h-3 w-16 bg-white/30 rounded animate-pulse" />
+                <div className="h-10 w-80 bg-white/30 rounded animate-pulse" />
+              </>
+            ) : notFound ? (
+              <h1 className="text-3xl md:text-4xl font-light text-white">Hotel Not Found</h1>
+            ) : (
+              <>
+                <p className="text-[11px] md:text-xs tracking-[0.3em] uppercase text-white/70">
+                  Hotel
+                </p>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-white tracking-tight">
+                  {hotel!.name}
+                </h1>
+                <p className="text-xs md:text-sm text-white/80 uppercase tracking-wide">
+                  {hotel!.location}
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Main details content – modelled on https://www.travelagentinkerala.com/hotel_dtls.php?g_id=6 */}
+      {/* Main details */}
       <section className="py-10 md:py-14 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/40">
         <div className="max-w-5xl mx-auto space-y-10 text-sm md:text-base text-muted-foreground">
-          <div className="space-y-4 text-justify leading-relaxed">
-            {(hotel.longDescription || hotel.description)
-              .split('\n')
-              .filter(Boolean)
-              .map((paragraph) => (
-                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-              ))}
-          </div>
 
-          {hotel.opinion && (
-            <div className="space-y-3">
-              <h3 className="text-base md:text-lg font-semibold text-foreground">Our Opinion</h3>
-              <p className="italic text-justify">{hotel.opinion}</p>
+          {isLoading ? (
+            <div className="space-y-4">
+              <div className="h-4 bg-muted animate-pulse rounded" />
+              <div className="h-4 bg-muted animate-pulse rounded" />
+              <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+              <div className="h-4 bg-muted animate-pulse rounded" />
+              <div className="h-4 bg-muted animate-pulse rounded w-5/6" />
             </div>
+          ) : notFound ? (
+            <p className="text-center text-muted-foreground">
+              The hotel you are looking for could not be found.
+            </p>
+          ) : (
+            <>
+              {/* Description */}
+              <div
+                className="space-y-4 text-justify leading-relaxed prose max-w-none text-muted-foreground [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                dangerouslySetInnerHTML={{
+                  __html: formatHtmlContent(hotel!.longDescription || hotel!.description),
+                }}
+              />
+
+              {/* Gallery – only shown when images are uploaded */}
+              {gallery.length > 0 && (
+                <div className="space-y-4">
+                  <h2 className="text-base md:text-lg font-semibold text-foreground">Gallery</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {gallery.map((src, idx) => (
+                      <div
+                        key={idx}
+                        className="relative overflow-hidden rounded-lg aspect-[4/3] bg-muted"
+                      >
+                        <img
+                          src={src}
+                          alt={`${hotel!.name} gallery image ${idx + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
-
-          <div className="space-y-4">
-            <h3 className="text-base md:text-lg font-semibold text-foreground">Gallery</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">
-              A curated image gallery for this hotel can be added here, similar to the gallery
-              section on the original hotels site.
-            </p>
-          </div>
-
-          {/* Contact info similar to reference site footer */}
-          <div className="pt-4 border-t border-border/60 text-center text-xs md:text-sm text-muted-foreground space-y-1">
-            <p className="font-medium">
-              20/3 B, P.A Ulahan Road, Maradu P.O, Cochin - 682304
-            </p>
-            <p>
-              Website:{' '}
-              <a
-                href="https://www.rithudmc.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                www.rithudmc.com
-              </a>
-            </p>
-            <p>
-              Email:{' '}
-              <a
-                href="mailto:info@rithudmc.com"
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                info@rithudmc.com
-              </a>{' '}
-              &nbsp; | &nbsp; Phone: +91 484 2664107
-            </p>
-          </div>
         </div>
       </section>
 
@@ -112,5 +147,3 @@ export default async function HotelDetailPage({ params }: HotelDetailPageProps) 
     </main>
   )
 }
-
-

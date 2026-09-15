@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
@@ -56,6 +59,43 @@ const aboutTiles: { key: AboutLinkKey; title: string; image: string; href: strin
 ]
 
 export default function AboutLinksSection({ current }: { current?: AboutLinkKey }) {
+  const [dynamicImages, setDynamicImages] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const keys: Partial<Record<AboutLinkKey, string>> = {
+        about: 'about-gallery',
+        team: 'team-gallery',
+        services: 'services-gallery',
+        why: 'travel-with-us-gallery',
+        booking: 'booking-gallery',
+        general: 'general-info-gallery',
+      }
+
+      const newImages: Record<string, string> = {}
+
+      await Promise.all(
+        Object.entries(keys).map(async ([tileKey, galleryKey]) => {
+          try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/about-galleries?key=${galleryKey}`)
+            if (response.ok) {
+              const data = await response.json()
+              if (Array.isArray(data) && data.length > 0 && data[0].image) {
+                newImages[tileKey] = data[0].image
+              }
+            }
+          } catch (error) {
+            console.error(`Failed to fetch image for gallery key ${galleryKey}:`, error)
+          }
+        })
+      )
+
+      setDynamicImages((prev) => ({ ...prev, ...newImages }))
+    }
+
+    fetchImages()
+  }, [])
+
   const tilesToShow = current
     ? aboutTiles.filter((tile) => tile.key !== current)
     : aboutTiles
@@ -81,7 +121,7 @@ export default function AboutLinksSection({ current }: { current?: AboutLinkKey 
               className="relative group overflow-hidden rounded-2xl bg-card shadow-md border border-white/10 min-h-[180px] md:min-h-[200px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent"
             >
               <img
-                src={tile.image || '/placeholder.jpg'}
+                src={dynamicImages[tile.key] || tile.image || '/placeholder.jpg'}
                 alt={tile.title}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />

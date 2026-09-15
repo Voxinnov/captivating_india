@@ -1,8 +1,8 @@
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
-import { TOURS } from '@/lib/tours'
 import { notFound } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { formatHtmlContent } from '@/lib/utils'
 
 type TourDetailPageProps = {
   params: Promise<{
@@ -10,16 +10,21 @@ type TourDetailPageProps = {
   }>
 }
 
-// Needed for static export with dynamic segment
-export function generateStaticParams() {
-  return TOURS.map((tour) => ({
-    slug: tour.slug,
-  }))
-}
-
 export default async function TourDetailPage({ params }: TourDetailPageProps) {
   const { slug } = await params
-  const tour = TOURS.find((t) => t.slug === slug)
+  
+  let tour = null;
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/tours/${slug}`, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
+    if (response.ok) {
+      const result = await response.json()
+      tour = result.data
+    }
+  } catch (error) {
+    console.error('Failed to fetch tour:', error)
+  }
 
   if (!tour) {
     notFound()
@@ -68,23 +73,32 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
             <TabsContent value="overview" className="leading-relaxed">
               <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-4 text-justify">
                 <h2 className="text-base md:text-lg font-semibold text-foreground mb-2">Overview</h2>
-                {(tour.overview || tour.description)
-                  .split('\n')
-                  .filter(Boolean)
-                  .map((paragraph) => (
-                    <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-                  ))}
+                <div
+                  className="prose max-w-none text-muted-foreground leading-relaxed text-justify space-y-4 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                  dangerouslySetInnerHTML={{
+                    __html: formatHtmlContent(tour.overview || tour.description),
+                  }}
+                />
               </div>
             </TabsContent>
 
             <TabsContent value="itinerary" className="leading-relaxed">
               <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-4">
-                <h2 className="text-base md:text-lg font-semibold text-foreground text-center mb-4">
+                <h2 className="text-base md:text-lg font-semibold text-foreground mb-4">
                   Itinerary
                 </h2>
-                {tour.itinerary && tour.itinerary.length > 0 ? (
+
+                {tour.itinerary_type === 'pdf' && tour.itinerary_pdf ? (
+                  <div className="relative w-full h-[600px] md:h-[800px] rounded-xl overflow-hidden border border-border/60 bg-muted select-none">
+                    <iframe
+                      src={`${tour.itinerary_pdf}#toolbar=0&navpanes=0&scrollbar=1`}
+                      className="w-full h-[calc(100%+56px)] -mt-[56px] border-0"
+                      title={`${tour.title} Itinerary PDF`}
+                    />
+                  </div>
+                ) : tour.itinerary && tour.itinerary.length > 0 ? (
                   <div className="space-y-2 text-justify">
-                    {tour.itinerary.map((day) => (
+                    {tour.itinerary.map((day: string) => (
                       <p key={day.slice(0, 40)}>{day}</p>
                     ))}
                   </div>
@@ -99,7 +113,7 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
                 <h2 className="text-base md:text-lg font-semibold text-foreground mb-3">Highlights</h2>
                 {tour.highlights && tour.highlights.length > 0 ? (
                   <ul className="list-disc pl-5 space-y-1">
-                    {tour.highlights.map((item) => (
+                    {tour.highlights.map((item: string) => (
                       <li key={item.slice(0, 40)}>{item}</li>
                     ))}
                   </ul>
@@ -129,11 +143,24 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="map" className="leading-relaxed">
-              <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-4">
-                <h2 className="text-base md:text-lg font-semibold text-foreground mb-3">Map</h2>
-                <div className="w-full h-64 md:h-80 rounded-xl overflow-hidden border border-border/60 bg-muted flex items-center justify-center text-xs md:text-sm text-muted-foreground">
-                  Map placeholder – a route map image or interactive map can be embedded here.
-                </div>
+              <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-4 flex flex-col items-center">
+                <h2 className="text-base md:text-lg font-semibold text-foreground self-start mb-3">Map</h2>
+                {tour.map_image ? (
+                  <div className="w-full max-w-4xl rounded-xl overflow-hidden border border-border/60">
+                    <img
+                      src={tour.map_image}
+                      alt={`${tour.title} Route Map`}
+                      className="w-full h-auto max-h-[600px] object-contain mx-auto"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-64 md:h-80 rounded-xl overflow-hidden border border-border/60 bg-muted flex items-center justify-center text-xs md:text-sm text-muted-foreground">
+                    Map placeholder – a route map image or interactive map can be embedded here.
+                  </div>
+                )}
               </div>
             </TabsContent>
 

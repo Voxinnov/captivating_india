@@ -10,16 +10,16 @@ class HotelController extends Controller
 {
     public function index()
     {
-        $hotels = Hotel::orderBy('order')
+        $hotels = Hotel::with('place')->orderBy('order')
             ->get()
             ->map(function ($hotel) {
                 return [
                     'id' => $hotel->id,
-                    'name' => $hotel->name,
+                    'name' => $hotel->title,
                     'slug' => $hotel->slug,
-                    'location' => $hotel->location,
+                    'location' => $hotel->place ? $hotel->place->title : 'Unknown',
                     'description' => $hotel->description,
-                    'image' => $hotel->image ? asset('storage/' . $hotel->image) : null,
+                    'image' => $hotel->image ? (str_starts_with($hotel->image, 'images/') ? '/' . $hotel->image : asset('storage/' . $hotel->image)) : null,
                     'longDescription' => $hotel->long_description,
                     'opinion' => $hotel->opinion,
                 ];
@@ -30,22 +30,29 @@ class HotelController extends Controller
 
     public function show($slug)
     {
-        $hotel = Hotel::where('slug', $slug)->first();
+        $hotel = Hotel::with(['place', 'images'])->where('slug', $slug)->first();
 
         if (!$hotel) {
             return response()->json(['message' => 'Hotel not found'], 404);
         }
 
+        $galleryImages = $hotel->images->map(function ($img) {
+            return str_starts_with($img->image_path, 'images/')
+                ? '/' . $img->image_path
+                : asset('storage/' . $img->image_path);
+        })->values()->all();
+
         return response()->json([
             'data' => [
                 'id' => $hotel->id,
-                'name' => $hotel->name,
+                'name' => $hotel->title,
                 'slug' => $hotel->slug,
-                'location' => $hotel->location,
+                'location' => $hotel->place ? $hotel->place->title : 'Unknown',
                 'description' => $hotel->description,
-                'image' => $hotel->image ? asset('storage/' . $hotel->image) : null,
+                'image' => $hotel->image ? (str_starts_with($hotel->image, 'images/') ? '/' . $hotel->image : asset('storage/' . $hotel->image)) : null,
                 'longDescription' => $hotel->long_description,
                 'opinion' => $hotel->opinion,
+                'gallery' => $galleryImages,
             ]
         ]);
     }

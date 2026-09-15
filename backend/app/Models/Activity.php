@@ -13,7 +13,8 @@ class Activity extends Model
     protected $fillable = [
         'title',
         'slug',
-        'destination',
+        'destination_id',
+        'place_id',
         'description',
         'long_description',
         'image',
@@ -21,11 +22,39 @@ class Activity extends Model
         'order',
     ];
 
+    public function place()
+    {
+        return $this->belongsTo(Place::class);
+    }
+
+    public function destination()
+    {
+        return $this->belongsTo(Destination::class);
+    }
+
     protected function casts(): array
     {
         return [
             'is_featured' => 'boolean',
         ];
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        if (str_starts_with($this->image, 'images/')) {
+            return '/' . $this->image;
+        }
+
+        return asset('storage/' . $this->image);
     }
 }
 

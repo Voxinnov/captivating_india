@@ -16,6 +16,8 @@
   "/services/page": "/services",
   "/team/page": "/team",
   "/testimonials/page": "/testimonials",
+  "/themes/[slug]/page": "/themes/[slug]",
+  "/themes/page": "/themes",
   "/tours/[slug]/page": "/tours/[slug]",
   "/tours/page": "/tours",
   "/why-travel-with-us/page": "/why-travel-with-us"

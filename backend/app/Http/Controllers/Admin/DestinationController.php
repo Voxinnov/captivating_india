@@ -16,6 +16,7 @@ class DestinationController extends Controller
         return view('admin.destinations.index', compact('destinations'));
     }
 
+
     public function create()
     {
         return view('admin.destinations.create');
@@ -29,8 +30,10 @@ class DestinationController extends Controller
             'description' => 'required|string',
             'image' => 'required|image|max:2048',
             'long_description' => 'nullable|string',
+            'highlights' => 'nullable|array',
             'is_featured' => 'boolean',
             'order' => 'integer',
+            'images.*' => 'image|max:2048',
         ]);
 
         if (empty($validated['slug'])) {
@@ -39,7 +42,14 @@ class DestinationController extends Controller
 
         $validated['image'] = $request->file('image')->store('destinations', 'public');
 
-        Destination::create($validated);
+        $destination = Destination::create($validated);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('destinations/gallery', 'public');
+                $destination->images()->create(['image_path' => $path]);
+            }
+        }
 
         return redirect()->route('admin.destinations.index')->with('success', 'Destination created successfully.');
     }
@@ -57,8 +67,10 @@ class DestinationController extends Controller
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
             'long_description' => 'nullable|string',
+            'highlights' => 'nullable|array',
             'is_featured' => 'boolean',
             'order' => 'integer',
+            'images.*' => 'image|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -69,6 +81,13 @@ class DestinationController extends Controller
         }
 
         $destination->update($validated);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('destinations/gallery', 'public');
+                $destination->images()->create(['image_path' => $path]);
+            }
+        }
 
         return redirect()->route('admin.destinations.index')->with('success', 'Destination updated successfully.');
     }

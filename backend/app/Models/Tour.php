@@ -16,9 +16,13 @@ class Tour extends Model
         'region',
         'description',
         'image',
+        'map_image',
         'overview',
+        'itinerary_type',
+        'itinerary_pdf',
         'itinerary',
         'highlights',
+        'more_info',
         'is_featured',
         'order',
     ];
@@ -30,6 +34,11 @@ class Tour extends Model
             'highlights' => 'array',
             'is_featured' => 'boolean',
         ];
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }
 

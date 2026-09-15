@@ -6,6 +6,7 @@ export type Hotel = {
   image: string
   longDescription?: string
   opinion?: string
+  gallery?: string[]
 }
 
 export const HOTELS: Hotel[] = [

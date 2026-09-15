@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { stripHtml } from '@/lib/utils'
 
 export default function DestinationsSection() {
   const [isVisible, setIsVisible] = useState(false)
@@ -56,7 +57,7 @@ export default function DestinationsSection() {
   const extraDestinations = destinations.slice(4)
 
   return (
-    <section ref={sectionRef} id="destinations" className="py-12 md:py-16 px-4 bg-muted/50 relative overflow-hidden">
+    <section ref={sectionRef} id="themes" className="py-12 md:py-16 px-4 bg-muted/50 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
@@ -96,7 +97,7 @@ export default function DestinationsSection() {
                         {dest.title}
                       </h3>
                       <p className="text-white/90 font-light mb-4 leading-relaxed text-sm line-clamp-3 text-justify">
-                        {dest.description}
+                        {stripHtml(dest.description)}
                       </p>
                       <a
                         href="#"
@@ -163,7 +164,7 @@ export default function DestinationsSection() {
 
                       {/* Description */}
                       <p className="text-white/90 font-light mb-6 leading-relaxed text-base md:text-lg max-w-md group-hover:text-white transition-colors duration-300 text-justify">
-                        {dest.description}
+                        {stripHtml(dest.description)}
                       </p>
 
                       {/* CTA Button */}
@@ -217,7 +218,7 @@ export default function DestinationsSection() {
                               {dest.title}
                             </h3>
                             <p className="text-white/90 font-light mb-4 leading-relaxed text-sm md:text-base line-clamp-3 text-justify">
-                              {dest.description}
+                              {stripHtml(dest.description)}
                             </p>
                             <a
                               href="#"

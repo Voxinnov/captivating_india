@@ -1,7 +1,21 @@
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
+import ContactForm from '@/components/contact-form'
 
-export default function ContactPage() {
+async function getSettings() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://captivationgindia.bvox.in'}/api/v1/settings`, { cache: 'no-store' })
+    const json = await res.json()
+    return json.data || {}
+  } catch (error) {
+    console.error('Failed to fetch settings:', error)
+    return {}
+  }
+}
+
+export default async function ContactPage() {
+  const settings = await getSettings()
+
   return (
     <main className="w-full bg-background">
       <Navigation />
@@ -43,215 +57,37 @@ export default function ContactPage() {
               ideas and a no‑obligation quote.
             </p>
 
-            <form className="space-y-5 bg-card rounded-2xl border border-border/70 shadow-sm p-5 md:p-7">
-              <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">Booking enquiry</h3>
-
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Title <span className="text-destructive">*</span>
-                  </label>
-                  <select className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">Select here</option>
-                    <option>Mr.</option>
-                    <option>Mrs.</option>
-                    <option>Ms.</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    First name <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Surname <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Trip date <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Duration of holiday (nights) <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Number of people <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Number of rooms <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Type of accommodation <span className="text-destructive">*</span>
-                  </label>
-                  <select className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">Select here</option>
-                    <option>Basic</option>
-                    <option>Standard</option>
-                    <option>First class</option>
-                    <option>Homestay</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs md:text-sm font-medium text-foreground">
-                  Your interests <span className="text-destructive">*</span>
-                </label>
-                <div className="grid md:grid-cols-3 gap-2 text-xs md:text-sm">
-                  {[
-                    'Culture',
-                    'Wildlife',
-                    'Photography',
-                    'Markets',
-                    'Treks and Walks',
-                    'Cruises',
-                    'Ayurveda & Yoga',
-                    'Volunteer projects',
-                    'Diving & Snorkelling',
-                    'Adventure trips',
-                    'Safaris',
-                    'Cycle tours',
-                  ].map((interest) => (
-                    <label key={interest} className="inline-flex items-center gap-2">
-                      <input type="checkbox" className="rounded border-border text-primary" />
-                      <span>{interest}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Approximate budget per day (INR) <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Email <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">
-                    Contact number
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs md:text-sm font-medium text-foreground">Contact address</label>
-                  <textarea
-                    rows={3}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs md:text-sm font-medium text-foreground">Any other requests</label>
-                <textarea
-                  rows={4}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                />
-              </div>
-
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-2.5 text-sm md:text-base font-medium text-primary-foreground shadow-md hover:shadow-lg hover:bg-primary/90 transition-colors"
-                >
-                  Send Message
-                </button>
-              </div>
-            </form>
+            <ContactForm />
           </div>
 
           {/* Contact info column */}
           <div className="space-y-4 text-sm md:text-base text-muted-foreground">
             <div className="bg-card rounded-2xl border border-border/70 shadow-sm p-5 md:p-6 space-y-3">
               <h3 className="text-base md:text-lg font-semibold text-foreground">Contact Info</h3>
-              <p className="text-xs md:text-sm">
-                20/3 B, P.A Ulahan Road,
-                <br />
-                Maradu P.O, Cochin - 682304
+              <p className="text-xs md:text-sm whitespace-pre-line">
+                {settings.contact_address || '20/3 B, P.A Ulahan Road,\nMaradu P.O, Cochin - 682304'}
               </p>
               <p className="text-xs md:text-sm">
                 Website:{' '}
                 <a
-                  href="https://www.rithudmc.com"
+                  href="https://captivatingindia.co.uk/"
                   target="_blank"
                   rel="noreferrer"
                   className="text-primary underline-offset-4 hover:underline"
                 >
-                  www.rithudmc.com
+                  captivatingindia.co.uk
                 </a>
               </p>
               <p className="text-xs md:text-sm">
                 Email:{' '}
                 <a
-                  href="mailto:info@rithudmc.com"
+                  href={`mailto:${settings.contact_email || 'info@captivatingindia.co.uk'}`}
                   className="text-primary underline-offset-4 hover:underline"
                 >
-                  info@rithudmc.com
+                  {settings.contact_email || 'info@captivatingindia.co.uk'}
                 </a>
                 <br />
-                Phone: +91 484 2664107
+                Phone: {settings.contact_phone || '+91 484 2664107'}
               </p>
             </div>
           </div>

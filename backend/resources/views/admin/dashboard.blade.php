@@ -50,7 +50,7 @@
         <div class="bg-white p-6 rounded-lg shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-600 text-sm">Destinations</p>
+                    <p class="text-gray-600 text-sm">Themes</p>
                     <p class="text-3xl font-bold mt-2">{{ $stats['destinations'] }}</p>
                 </div>
                 <i class="fas fa-map-marker-alt text-4xl text-red-500"></i>
@@ -69,13 +69,8 @@
     </div>
 
     <div class="mt-8 bg-white p-6 rounded-lg shadow">
-        <h2 class="text-xl font-bold mb-4">Quick Links</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="{{ route('admin.tours.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-center">Add Tour</a>
-            <a href="{{ route('admin.hotels.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-center">Add Hotel</a>
-            <a href="{{ route('admin.activities.create') }}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded text-center">Add Activity</a>
-            <a href="{{ route('admin.testimonials.create') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-center">Add Testimonial</a>
-        </div>
+        <h2 class="text-xl font-bold mb-4">Welcome to Captivating India Admin Panel</h2>
+        <p class="text-gray-600">Use the sidebar navigation to manage your content. Click on any section to view and edit items. Use the "Add New" button on each page to create new content via the modal forms.</p>
     </div>
 </div>
 @endsection

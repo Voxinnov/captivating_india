@@ -2,7 +2,7 @@
   "headers": {
     "x-nextjs-stale-time": "300",
     "x-nextjs-prerender": "1",
-    "x-next-cache-tags": "_N_T_/layout,_N_T_/activities/layout,_N_T_/activities/[slug]/layout,_N_T_/activities/[slug]/page,_N_T_/activities/guided-nature-walks-plantation-trails/"
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/activities/layout,_N_T_/activities/[slug]/layout,_N_T_/activities/[slug]/page,_N_T_/activities/guided-nature-walks-plantation-trails"
   },
   "segmentPaths": [
     "/_tree",

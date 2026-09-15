@@ -43,17 +43,17 @@
         <h2 class="text-xl font-bold mb-4 mt-8">Social Media</h2>
         <div class="mb-4">
             <label class="block font-bold mb-2">Facebook URL</label>
-            <input type="url" name="facebook_url" value="{{ $settings->firstWhere('key', 'facebook_url')?->value }}" class="w-full px-3 py-2 border rounded">
+            <input type="text" name="facebook_url" value="{{ $settings->firstWhere('key', 'facebook_url')?->value }}" class="w-full px-3 py-2 border rounded">
         </div>
 
         <div class="mb-4">
             <label class="block font-bold mb-2">Instagram URL</label>
-            <input type="url" name="instagram_url" value="{{ $settings->firstWhere('key', 'instagram_url')?->value }}" class="w-full px-3 py-2 border rounded">
+            <input type="text" name="instagram_url" value="{{ $settings->firstWhere('key', 'instagram_url')?->value }}" class="w-full px-3 py-2 border rounded">
         </div>
 
         <div class="mb-4">
             <label class="block font-bold mb-2">YouTube URL</label>
-            <input type="url" name="youtube_url" value="{{ $settings->firstWhere('key', 'youtube_url')?->value }}" class="w-full px-3 py-2 border rounded">
+            <input type="text" name="youtube_url" value="{{ $settings->firstWhere('key', 'youtube_url')?->value }}" class="w-full px-3 py-2 border rounded">
         </div>
 
         <h2 class="text-xl font-bold mb-4 mt-8">Footer</h2>

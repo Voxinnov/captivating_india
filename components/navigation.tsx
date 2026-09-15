@@ -10,10 +10,9 @@ export default function Navigation() {
   const links = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '#destinations', label: 'Destinations' },
+    { href: '/themes', label: 'Destinations' },
     { href: '/tours', label: 'Tours' },
     { href: '/hotels', label: 'Hotels' },
-    { href: '/activities', label: 'Activities' },
     { href: '/gallery', label: 'Gallery' },
     { href: '/contact', label: 'Contact' },
   ]
@@ -31,16 +30,16 @@ export default function Navigation() {
             />
           </Link>
 
-          {/* Desktop Navigation */}
+        {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {links.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className="text-sm font-medium tracking-wider text-white uppercase hover:text-primary transition-colors"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -49,9 +48,9 @@ export default function Navigation() {
             <Mail size={18} className="text-white" />
             <a 
               href="mailto:info@captivatingindia.co.uk" 
-              className="text-xs md:text-sm font-medium tracking-wider uppercase hover:text-primary transition-colors"
+              className="text-xs md:text-sm font-medium tracking-wider hover:text-primary transition-colors"
             >
-              INFO@CAPTIVATINGINDIA.CO.UK
+              info@captivatingindia.co.uk
             </a>
           </div>
 
@@ -70,23 +69,23 @@ export default function Navigation() {
           <div className="lg:hidden pb-4 border-t border-white/20">
             <div className="flex flex-col gap-4 pt-4">
               {links.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   className="text-sm font-medium tracking-wider text-white uppercase hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="flex items-center gap-2 text-white pt-2 border-t border-white/20">
                 <Mail size={18} />
                 <a 
                   href="mailto:info@captivatingindia.co.uk" 
-                  className="text-xs font-medium tracking-wider uppercase hover:text-primary transition-colors"
+                  className="text-xs font-medium tracking-wider hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
-                  INFO@CAPTIVATINGINDIA.CO.UK
+                  info@captivatingindia.co.uk
                 </a>
               </div>
             </div>

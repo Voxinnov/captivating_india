@@ -1,6 +1,10 @@
+'use client'
+
+import React from 'react'
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
 import AboutLinksSection from '@/components/about-links-section'
+import DynamicHeroSection from '@/components/dynamic-hero-section'
 
 export default function WhyTravelWithUsPage() {
   return (
@@ -8,20 +12,11 @@ export default function WhyTravelWithUsPage() {
       <Navigation />
 
       {/* Hero */}
-      <section className="relative overflow-hidden flex items-center min-h-[360px] md:min-h-[650px]">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/11-08-2025-11-15-33-Oberoi Udaivilas.jpg')" }}
-        />
-
-        <div className="relative w-full py-20 md:py-28 lg:py-32">
-          <div className="max-w-4xl mx-auto px-4 flex items-center justify-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white tracking-tight text-center">
-              Why Travel With Us
-            </h1>
-          </div>
-        </div>
-      </section>
+      <DynamicHeroSection
+        galleryKey="travel-with-us-gallery"
+        fallbackTitle="Why Travel With Us"
+        fallbackImage="/images/11-08-2025-11-15-33-Oberoi Udaivilas.jpg"
+      />
 
       {/* Main content */}
       <section className="py-12 md:py-16 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/40">

@@ -4,13 +4,31 @@ import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { HOTELS } from '@/lib/hotels'
+import { stripHtml } from '@/lib/utils'
 
 export default function HotelsSection() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const hotels = HOTELS
+  const [hotels, setHotels] = useState<any[]>(HOTELS)
+
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://captivationgindia.bvox.in'}/api/v1/hotels`)
+        if (response.ok) {
+          const json = await response.json()
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            setHotels(json.data)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch hotels:', error)
+      }
+    };
+    fetchHotels()
+  }, [])
 
   // Number of items to show per slide
   const itemsPerView = {
@@ -150,7 +168,7 @@ export default function HotelsSection() {
                           </h3>
                           <p className="text-xs text-primary font-medium mb-3">{hotel.location}</p>
                           <p className="text-sm text-muted-foreground font-light mb-4 leading-relaxed line-clamp-3 text-justify">
-                            {hotel.description}
+                            {stripHtml(hotel.description)}
                           </p>
                           <Link
                             href={`/hotels/${hotel.slug}`}

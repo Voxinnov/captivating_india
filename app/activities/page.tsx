@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react'
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
 import { ACTIVITIES, ACTIVITY_DESTINATIONS, Activity } from '@/lib/activities'
+import { stripHtml } from '@/lib/utils'
 
 export default function ActivitiesPage() {
   const [destination, setDestination] = useState<string>('All')
@@ -127,8 +128,8 @@ export default function ActivitiesPage() {
                   <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2">
                     {activity.title}
                   </h3>
-                  <p className="text-xs md:text-sm text-muted-foreground text-justify leading-relaxed mb-4">
-                    {activity.description}
+                  <p className="text-xs md:text-sm text-muted-foreground text-justify leading-relaxed mb-4 line-clamp-3">
+                    {stripHtml(activity.description)}
                   </p>
                   <div className="mt-auto">
                     <Link

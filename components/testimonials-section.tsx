@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react'
 
 type Testimonial = {
+  id?: number
   name: string
   location: string
   text: string
   trip: string
+  rating?: number
 }
 
-const testimonials: Testimonial[] = [
+const fallbackTestimonials: Testimonial[] = [
   {
     name: 'Sarah & James',
     location: 'London, UK',
@@ -32,16 +34,53 @@ const testimonials: Testimonial[] = [
 
 export default function TestimonialsSection() {
   const [index, setIndex] = useState(0)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % testimonials.length)
-    }, 9000)
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://captivationgindia.bvox.in'}/api/v1/testimonials`)
+        if (response.ok) {
+          const result = await response.json()
+          if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+            setTestimonials(result.data)
+          } else {
+            setTestimonials(fallbackTestimonials)
+          }
+        } else {
+          setTestimonials(fallbackTestimonials)
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error)
+        setTestimonials(fallbackTestimonials)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    return () => clearInterval(timer)
+    fetchTestimonials()
   }, [])
 
-  const active = testimonials[index]
+  useEffect(() => {
+    if (testimonials.length > 1) {
+      const timer = setInterval(() => {
+        setIndex((prev) => (prev + 1) % testimonials.length)
+      }, 9000)
+
+      return () => clearInterval(timer)
+    }
+  }, [testimonials.length])
+
+  if (isLoading) {
+    return (
+      <section className="relative py-12 md:py-16 px-4 bg-muted animate-pulse">
+        <div className="max-w-5xl mx-auto h-64 bg-gray-200 rounded-3xl" />
+      </section>
+    )
+  }
+
+  const active = testimonials[index] || fallbackTestimonials[0]
 
   return (
     <section
@@ -90,7 +129,7 @@ export default function TestimonialsSection() {
               </div>
 
               <div className="hidden md:flex items-center gap-1 text-xs text-white/70">
-                <span className="text-sm font-semibold text-white">4.9 / 5</span>
+                <span className="text-sm font-semibold text-white">{active.rating || '4.9'} / 5</span>
                 <span>Guest rating</span>
               </div>
             </div>

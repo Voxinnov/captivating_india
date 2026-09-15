@@ -110,6 +110,30 @@ class GalleryController extends Controller
         return redirect()->route('admin.gallery.index')->with('success', 'Gallery category deleted successfully.');
     }
 
+    public function showImages()
+    {
+        $images = GalleryImage::with('category')->latest()->paginate(30);
+        $categories = GalleryCategory::orderBy('title')->get();
+        return view('admin.gallery.images', compact('images', 'categories'));
+    }
+
+    public function storeImage(Request $request)
+    {
+        $request->validate([
+            'gallery_category_id' => 'required|exists:gallery_categories,id',
+            'image' => 'required|image|max:2048',
+        ]);
+
+        GalleryImage::create([
+            'gallery_category_id' => $request->gallery_category_id,
+            'image_path' => $request->file('image')->store('gallery', 'public'),
+            'alt_text' => $request->alt_text,
+            'order' => 0,
+        ]);
+
+        return back()->with('success', 'Image added successfully.');
+    }
+
     public function deleteImage(GalleryImage $image)
     {
         Storage::disk('public')->delete($image->image_path);

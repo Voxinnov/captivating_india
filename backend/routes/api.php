@@ -9,10 +9,16 @@ use App\Http\Controllers\Api\HotelController;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\SiteSettingController;
+use App\Http\Controllers\Api\AboutGalleryController;
+use App\Http\Controllers\Api\AboutSectionController;
+use App\Http\Controllers\Api\SliderController;
+use App\Http\Controllers\Api\ContactMessageController;
 use Illuminate\Support\Facades\Route;
 
 // Public API Routes (No Authentication Required)
 Route::prefix('v1')->group(function () {
+    // Contact Messages
+    Route::post('/contact-messages', [ContactMessageController::class, 'store']);
     // Home Page
     Route::get('/home-page', [HomePageController::class, 'index']);
 
@@ -46,6 +52,15 @@ Route::prefix('v1')->group(function () {
 
     // Site Settings
     Route::get('/settings', [SiteSettingController::class, 'index']);
+
+    // About Galleries
+    Route::get('/about-galleries', [AboutGalleryController::class, 'index']);
+
+    // About Sections
+    Route::get('/about-sections', [AboutSectionController::class, 'index']);
+
+    // Sliders
+    Route::get('/sliders', [SliderController::class, 'index']);
 });
 
 // Protected API Routes (Token Authentication Required)

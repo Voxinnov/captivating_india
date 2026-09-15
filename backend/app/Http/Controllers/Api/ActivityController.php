@@ -10,17 +10,18 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $activities = Activity::orderBy('order')
+        $activities = Activity::with(['place', 'destination'])->orderBy('order')
             ->get()
             ->map(function ($activity) {
                 return [
                     'id' => $activity->id,
                     'title' => $activity->title,
                     'slug' => $activity->slug,
-                    'destination' => $activity->destination,
+                    'theme' => $activity->destination ? $activity->destination->title : ($activity->place && $activity->place->destination ? $activity->place->destination->title : null),
+                    'location' => $activity->place ? $activity->place->title : null,
                     'description' => $activity->description,
                     'longDescription' => $activity->long_description,
-                    'image' => $activity->image ? asset('storage/' . $activity->image) : null,
+                    'image' => $activity->image_url,
                 ];
             });
 
@@ -40,10 +41,11 @@ class ActivityController extends Controller
                 'id' => $activity->id,
                 'title' => $activity->title,
                 'slug' => $activity->slug,
-                'destination' => $activity->destination,
+                'theme' => $activity->destination ? $activity->destination->title : ($activity->place && $activity->place->destination ? $activity->place->destination->title : null),
+                'location' => $activity->place ? $activity->place->title : null,
                 'description' => $activity->description,
                 'longDescription' => $activity->long_description,
-                'image' => $activity->image ? asset('storage/' . $activity->image) : null,
+                'image' => $activity->image_url,
             ]
         ]);
     }

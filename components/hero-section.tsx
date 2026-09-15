@@ -3,43 +3,72 @@
 import { useEffect, useState, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+interface Slide {
+  image_url: string
+  mobile_image_url?: string | null
+  title: string | null
+  caption: string | null
+}
+
 export default function HeroSection() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [slides, setSlides] = useState<Slide[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const slides = [
+  const fallbackSlides = [
     {
-      image: '/images/rithudmc-keralabackwaters-kumarakom-2808.jpg',
+      image_url: '/images/rithudmc-keralabackwaters-kumarakom-2808.jpg',
       title: 'Experience India',
-      subtitle: 'All Seasons',
-      description: 'Discover authentic travel experiences across Kerala and India with Captivating India, your trusted travel partner'
+      caption: 'Experience India'
     },
     {
-      image: '/images/rithudmc-keralabackwaters-kumarakom-9085.jpg',
+      image_url: '/images/rithudmc-keralabackwaters-kumarakom-9085.jpg',
       title: 'Kerala Backwaters',
-      subtitle: 'Serene Beauty',
-      description: 'Experience the tranquil backwaters of Kerala, where nature meets tradition in perfect harmony'
+      caption: 'Kerala Backwaters'
     },
     {
-      image: '/images/29-05-2021-12-37-36-Meesapulimalai-trek.jpg',
+      image_url: '/images/29-05-2021-12-37-36-Meesapulimalai-trek.jpg',
       title: 'Adventure Awaits',
-      subtitle: 'Explore Treks',
-      description: 'Embark on unforgettable treks and discover the breathtaking landscapes of South India'
+      caption: 'Adventure Awaits'
     },
     {
-      image: '/images/11-08-2025-11-15-33-Oberoi Udaivilas.jpg',
+      image_url: '/images/11-08-2025-11-15-33-Oberoi Udaivilas.jpg',
       title: 'Luxury Stays',
-      subtitle: 'Premium Hotels',
-      description: 'Indulge in world-class hospitality at our carefully selected luxury properties across India'
+      caption: 'Luxury Stays'
     },
     {
-      image: '/images/29-05-2021-12-37-36-Mararikulam---1.jpg',
+      image_url: '/images/29-05-2021-12-37-36-Mararikulam---1.jpg',
       title: 'Coastal Paradise',
-      subtitle: 'Beautiful Beaches',
-      description: 'Relax on pristine beaches and enjoy the coastal charm of Kerala and South India'
+      caption: 'Coastal Paradise'
     },
   ]
+
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://captivationgindia.bvox.in'}/api/v1/sliders`)
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data) && data.length > 0) {
+            setSlides(data)
+          } else {
+            setSlides(fallbackSlides)
+          }
+        } else {
+          setSlides(fallbackSlides)
+        }
+      } catch (error) {
+        console.error('Failed to fetch sliders:', error)
+        setSlides(fallbackSlides)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSlides()
+  }, [])
 
   useEffect(() => {
     if (!isPaused) {
@@ -80,6 +109,14 @@ export default function HeroSection() {
     }
   }
 
+  if (isLoading) {
+    return (
+      <section className="relative w-full h-screen flex items-center justify-center bg-muted">
+        <div className="animate-pulse w-full h-full bg-gray-200" />
+      </section>
+    )
+  }
+
   const currentSlide = slides[currentIndex]
 
   return (
@@ -97,15 +134,20 @@ export default function HeroSection() {
               index === currentIndex ? 'opacity-100 z-0' : 'opacity-0 z-0'
             }`}
           >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback if image fails to load
-                e.currentTarget.src = '/placeholder.jpg'
-              }}
-            />
+            <picture className="w-full h-full">
+              {slide.mobile_image_url && (
+                <source media="(max-width: 768px)" srcSet={slide.mobile_image_url} />
+              )}
+              <img
+                src={slide.image_url}
+                alt={slide.title || 'Hero Image'}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback if image fails to load
+                  e.currentTarget.src = '/placeholder.jpg'
+                }}
+              />
+            </picture>
           </div>
         ))}
       </div>
@@ -184,13 +226,8 @@ export default function HeroSection() {
       <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
         <div className="transition-all duration-700 ease-in-out">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-light mb-6 tracking-tight leading-tight">
-            {currentSlide.title}
-            <br />
-            <span className="text-primary">{currentSlide.subtitle}</span>
+            {currentSlide?.caption}
           </h1>
-          <p className="text-lg md:text-xl font-light mb-10 opacity-95 max-w-2xl mx-auto text-justify">
-            {currentSlide.description}
-          </p>
         </div>
       </div>
 

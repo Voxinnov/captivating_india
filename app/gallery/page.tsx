@@ -1,9 +1,22 @@
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
-import { GALLERY_CATEGORIES } from '@/lib/gallery'
 import Link from 'next/link'
 
-export default function GalleryPage() {
+async function getGalleryCategories() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/gallery`, { next: { revalidate: 0 } })
+    if (!res.ok) return []
+    const json = await res.json()
+    return json.data || []
+  } catch (error) {
+    console.error('Failed to fetch gallery categories:', error)
+    return []
+  }
+}
+
+export default async function GalleryPage() {
+  const categories = await getGalleryCategories()
+
   return (
     <main className="w-full bg-background">
       <Navigation />
@@ -32,7 +45,7 @@ export default function GalleryPage() {
       <section className="py-10 md:py-14 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/40">
         <div className="max-w-6xl mx-auto">
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {GALLERY_CATEGORIES.map((category) => (
+            {categories.map((category: any) => (
               <Link
                 key={category.slug}
                 href={`/gallery/${category.slug}`}

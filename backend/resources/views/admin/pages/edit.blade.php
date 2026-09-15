@@ -59,5 +59,24 @@
         </div>
     </form>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#content').summernote({
+            placeholder: 'Type your page content here...',
+            tabsize: 2,
+            height: 500,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
 @endsection
 

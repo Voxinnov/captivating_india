@@ -2,6 +2,7 @@ import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
 import { ACTIVITIES } from '@/lib/activities'
 import { notFound } from 'next/navigation'
+import { formatHtmlContent } from '@/lib/utils'
 
 type ActivityDetailPageProps = {
   params: Promise<{
@@ -54,14 +55,12 @@ export default async function ActivityDetailPage({ params }: ActivityDetailPageP
       {/* Main details content – similar in spirit to activity.php */}
       <section className="py-10 md:py-14 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/40">
         <div className="max-w-5xl mx-auto space-y-8 text-sm md:text-base text-muted-foreground">
-          <div className="space-y-4 text-justify leading-relaxed">
-            {(activity.longDescription || activity.description)
-              .split('\n')
-              .filter(Boolean)
-              .map((paragraph) => (
-                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-              ))}
-          </div>
+          <div
+            className="space-y-4 text-justify leading-relaxed prose max-w-none text-muted-foreground [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+            dangerouslySetInnerHTML={{
+              __html: formatHtmlContent(activity.longDescription || activity.description),
+            }}
+          />
 
           <p className="text-xs md:text-sm text-muted-foreground">
             This experience can be tailored to your wider itinerary and combined with other activities

@@ -9,18 +9,107 @@
         @csrf @method('PUT')
         <div class="mb-4"><label class="block font-bold mb-2">Title *</label><input type="text" name="title" value="{{ old('title', $tour->title) }}" required class="w-full px-3 py-2 border rounded"></div>
         <div class="mb-4"><label class="block font-bold mb-2">Slug *</label><input type="text" name="slug" value="{{ old('slug', $tour->slug) }}" required class="w-full px-3 py-2 border rounded"></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Region *</label><input type="text" name="region" value="{{ old('region', $tour->region) }}" required class="w-full px-3 py-2 border rounded"></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Description *</label><textarea name="description" rows="3" required class="w-full px-3 py-2 border rounded">{{ old('description', $tour->description) }}</textarea></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Image</label>@if($tour->image)<img src="{{ asset('storage/' . $tour->image) }}" class="mb-2 h-32">@endif<input type="file" name="image" accept="image/*" class="w-full px-3 py-2 border rounded"></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Overview</label><textarea name="overview" rows="5" class="w-full px-3 py-2 border rounded">{{ old('overview', $tour->overview) }}</textarea></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Itinerary (JSON array)</label><textarea name="itinerary" rows="10" class="w-full px-3 py-2 border rounded font-mono text-sm">{{ json_encode(old('itinerary', $tour->itinerary), JSON_PRETTY_PRINT) }}</textarea></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Highlights (JSON array)</label><textarea name="highlights" rows="5" class="w-full px-3 py-2 border rounded font-mono text-sm">{{ json_encode(old('highlights', $tour->highlights), JSON_PRETTY_PRINT) }}</textarea></div>
+
+        <div class="mb-4"><label class="block font-bold mb-2">Image</label>@if($tour->image)<img src="{{ str_starts_with($tour->image, 'images/') ? asset($tour->image) : asset('storage/' . $tour->image) }}" class="mb-2 h-32">@endif<input type="file" name="image" accept="image/*" class="w-full px-3 py-2 border rounded"></div>
+        <div class="mb-4"><label class="block font-bold mb-2">Map Image</label>@if($tour->map_image)<img src="{{ str_starts_with($tour->map_image, 'images/') ? asset($tour->map_image) : asset('storage/' . $tour->map_image) }}" class="mb-2 h-32">@endif<input type="file" name="map_image" accept="image/*" class="w-full px-3 py-2 border rounded"></div>
+
+        <div class="mb-6 p-4 border rounded bg-gray-50">
+            <label class="block font-bold mb-3 text-lg">Tour Gallery Images</label>
+            
+            @if($tour->images && $tour->images->count() > 0)
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    @foreach($tour->images as $img)
+                        <div class="relative group border rounded bg-white p-2">
+                            <img src="{{ str_starts_with($img->image_path, 'images/') ? asset($img->image_path) : asset('storage/' . $img->image_path) }}" class="h-24 w-full object-cover">
+                            <div class="mt-2 text-right">
+                                <button type="button" 
+                                        onclick="if(confirm('Delete this gallery image?')) { document.getElementById('delete-img-{{ $img->id }}').submit(); }" 
+                                        class="bg-red-500 hover:bg-red-600 text-white text-xs px-2.5 py-1 rounded transition">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-gray-500 italic mb-4">No gallery images uploaded yet.</p>
+            @endif
+
+            <div>
+                <label class="block font-bold mb-2 text-sm text-gray-700">Upload New Gallery Images</label>
+                <input type="file" name="images[]" multiple accept="image/*" class="w-full px-3 py-2 border rounded bg-white">
+            </div>
+        </div>
+
+        <div class="mb-4"><label class="block font-bold mb-2">Overview</label><textarea id="overview" name="overview" rows="5" class="w-full px-3 py-2 border rounded">{{ old('overview', $tour->overview) }}</textarea></div>
+        <div class="mb-6 p-4 border rounded bg-gray-50" x-data="{ itineraryType: '{{ old('itinerary_type', $tour->itinerary_type ?? 'text') }}' }">
+            <label class="block font-bold mb-2 text-base">Itinerary Format</label>
+            <div class="flex items-center gap-6 mb-4">
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="itinerary_type" value="text" x-model="itineraryType" class="form-radio text-blue-600">
+                    <span class="ml-2 font-medium">Text</span>
+                </label>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="itinerary_type" value="pdf" x-model="itineraryType" class="form-radio text-blue-600">
+                    <span class="ml-2 font-medium">PDF File</span>
+                </label>
+            </div>
+
+            <div x-show="itineraryType === 'text'">
+                <label class="block font-bold mb-2 text-sm text-gray-700">Itinerary (One item per line)</label>
+                <textarea name="itinerary" rows="8" class="w-full px-3 py-2 border rounded font-mono text-sm">{{ old('itinerary', is_array($tour->itinerary) ? implode("\n", $tour->itinerary) : '') }}</textarea>
+            </div>
+
+            <div x-show="itineraryType === 'pdf'" style="display: none;">
+                <label class="block font-bold mb-2 text-sm text-gray-700">Itinerary PDF File</label>
+                @if($tour->itinerary_pdf)
+                    <div class="mb-3 p-3 bg-white border rounded flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-file-pdf text-red-500 text-xl"></i>
+                            <span class="text-sm font-medium text-gray-800">Current PDF: {{ basename($tour->itinerary_pdf) }}</span>
+                        </div>
+                        <a href="{{ str_starts_with($tour->itinerary_pdf, 'http') ? $tour->itinerary_pdf : asset('storage/' . $tour->itinerary_pdf) }}" target="_blank" class="text-blue-600 hover:underline text-sm font-semibold">View PDF</a>
+                    </div>
+                @endif
+                <input type="file" name="itinerary_pdf" accept="application/pdf" class="w-full px-3 py-2 border rounded bg-white">
+                <p class="text-xs text-gray-500 mt-1">Upload a PDF file to set or replace the itinerary PDF.</p>
+            </div>
+        </div>
+        <div class="mb-4"><label class="block font-bold mb-2">Highlights (One item per line)</label><textarea name="highlights" rows="5" class="w-full px-3 py-2 border rounded font-mono text-sm">{{ old('highlights', is_array($tour->highlights) ? implode("\n", $tour->highlights) : '') }}</textarea></div>
         <div class="mb-4"><label class="flex items-center"><input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $tour->is_featured) ? 'checked' : '' }} class="mr-2"><span>Featured</span></label></div>
         <div class="flex gap-4">
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded">Update</button>
             <a href="{{ route('admin.tours.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded">Cancel</a>
         </div>
     </form>
+
+    @if($tour->images && $tour->images->count() > 0)
+        @foreach($tour->images as $img)
+            <form id="delete-img-{{ $img->id }}" action="{{ route('admin.tours.images.destroy', $img->id) }}" method="POST" class="hidden">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endforeach
+    @endif
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#overview').summernote({
+            placeholder: 'Type here...',
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
 @endsection
 

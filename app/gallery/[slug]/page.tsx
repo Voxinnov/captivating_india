@@ -1,8 +1,19 @@
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
-import { GALLERY_CATEGORIES } from '@/lib/gallery'
 import { notFound } from 'next/navigation'
 import GalleryGrid from '@/components/gallery-grid'
+
+async function getGalleryCategory(slug: string) {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/gallery/${slug}`, { next: { revalidate: 0 } })
+    if (!res.ok) return null
+    const json = await res.json()
+    return json.data || null
+  } catch (error) {
+    console.error('Failed to fetch gallery category:', error)
+    return null
+  }
+}
 
 type GalleryDetailPageProps = {
   params: Promise<{
@@ -10,16 +21,9 @@ type GalleryDetailPageProps = {
   }>
 }
 
-// Needed for static export with dynamic segment
-export function generateStaticParams() {
-  return GALLERY_CATEGORIES.map((cat) => ({
-    slug: cat.slug,
-  }))
-}
-
 export default async function GalleryDetailPage({ params }: GalleryDetailPageProps) {
   const { slug } = await params
-  const category = GALLERY_CATEGORIES.find((c) => c.slug === slug)
+  const category = await getGalleryCategory(slug)
 
   if (!category) {
     notFound()

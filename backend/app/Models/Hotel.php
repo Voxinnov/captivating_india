@@ -11,10 +11,12 @@ class Hotel extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'title',
         'slug',
-        'location',
+        'place_id',
         'description',
+        'flag',
+        'map',
         'image',
         'long_description',
         'opinion',
@@ -22,11 +24,34 @@ class Hotel extends Model
         'order',
     ];
 
+    public function place()
+    {
+        return $this->belongsTo(Place::class);
+    }
+
     protected function casts(): array
     {
         return [
             'is_featured' => 'boolean',
         ];
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        if (str_starts_with($this->image, 'images/')) {
+            return '/' . $this->image;
+        }
+
+        return asset('storage/' . $this->image);
     }
 }
 

@@ -19,7 +19,7 @@ class GalleryImage extends Model
 
     public function category()
     {
-        return $this->belongsTo(GalleryCategory::class);
+        return $this->belongsTo(GalleryCategory::class, 'gallery_category_id');
     }
 }
 

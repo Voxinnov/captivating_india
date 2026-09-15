@@ -2,7 +2,6 @@ import Navigation from '@/components/navigation'
 import HeroSection from '@/components/hero-section'
 import AboutSection from '@/components/about-section'
 import TestimonialsSection from '@/components/testimonials-section'
-import DestinationsSection from '@/components/destinations-section'
 import ToursSection from '@/components/tours-section'
 import HotelsSection from '@/components/hotels-section'
 import ActivitiesSection from '@/components/activities-section'
@@ -16,7 +15,6 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <TestimonialsSection />
-      <DestinationsSection />
       <ToursSection />
       <HotelsSection />
       <ActivitiesSection />

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tour;
+use App\Models\TourCategory;
 use App\Models\Image;
+use App\Models\Place;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -13,14 +15,18 @@ class TourController extends Controller
 {
     public function index()
     {
-        $tours = Tour::orderBy('order')->latest()->paginate(20);
-        return view('admin.tours.index', compact('tours'));
+        $tours = Tour::with(['category'])->orderBy('order')->latest()->paginate(20);
+        $places = Place::with('destination:id,title')->orderBy('title')->get();
+        $categories = TourCategory::orderBy('title')->get();
+        return view('admin.tours.index', compact('tours', 'places', 'categories'));
     }
 
 
     public function create()
     {
-        return view('admin.tours.create');
+        $places = Place::with('destination:id,title')->orderBy('title')->get();
+        $categories = TourCategory::orderBy('title')->get();
+        return view('admin.tours.create', compact('places', 'categories'));
     }
 
     public function store(Request $request)
@@ -40,6 +46,8 @@ class TourController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:tours,slug',
+            'tour_category_id' => 'nullable|exists:tour_categories,id',
+            'region' => 'nullable|string|max:255',
             'image' => 'required|image|max:2048',
             'map_image' => 'nullable|image|max:2048',
             'overview' => 'nullable|string',
@@ -71,6 +79,9 @@ class TourController extends Controller
 
         $tour = Tour::create($validated);
 
+        // Sync places
+        $tour->places()->sync($request->input('places', []));
+
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('tours/gallery', 'public');
@@ -83,8 +94,11 @@ class TourController extends Controller
 
     public function edit(Tour $tour)
     {
-        $tour->load('images');
-        return view('admin.tours.edit', compact('tour'));
+        $tour->load('images', 'places', 'category');
+        $places = Place::with('destination:id,title')->orderBy('title')->get();
+        $categories = TourCategory::orderBy('title')->get();
+        $selectedPlaceIds = $tour->places->pluck('id')->toArray();
+        return view('admin.tours.edit', compact('tour', 'places', 'selectedPlaceIds', 'categories'));
     }
 
     public function update(Request $request, Tour $tour)
@@ -104,6 +118,8 @@ class TourController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:tours,slug,' . $tour->id,
+            'tour_category_id' => 'nullable|exists:tour_categories,id',
+            'region' => 'nullable|string|max:255',
             'image' => 'nullable|image|max:2048',
             'map_image' => 'nullable|image|max:2048',
             'overview' => 'nullable|string',
@@ -141,6 +157,9 @@ class TourController extends Controller
         }
 
         $tour->update($validated);
+
+        // Sync places
+        $tour->places()->sync($request->input('places', []));
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {

@@ -69,10 +69,10 @@ export default function AttractiveThemesGrid() {
                   </p>
 
                   <Link
-                    href={`/themes/${theme.slug}/`}
+                    href={`/destinations/${theme.slug}`}
                     className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium shadow-lg hover:bg-primary/90 transition-all duration-300 group/btn"
                   >
-                    <span>View Journey</span>
+                    <span>View Destination</span>
                     <ArrowRight size={18} className="transform transition-transform duration-300 group-hover/btn:translate-x-1" />
                   </Link>
                 </div>

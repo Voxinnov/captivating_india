@@ -8,42 +8,53 @@ use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
+    private function resolveImageUrl(string $path): string
+    {
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+        $base = rtrim(config('app.url'), '/');
+        if (str_starts_with($path, 'images/')) {
+            return $base . '/' . $path;
+        }
+        return $base . '/storage/' . $path;
+    }
+
     public function index()
     {
-        $tours = Tour::orderBy('order')
+        $tours = Tour::with(['category', 'images', 'places.destination'])->orderBy('order')
             ->get()
             ->map(function ($tour) {
-                $imageUrl = null;
-                if ($tour->image) {
-                    if (str_starts_with($tour->image, 'images/')) {
-                        $imageUrl = asset($tour->image);
-                    } else {
-                        $imageUrl = asset('storage/' . $tour->image);
-                    }
-                }
+                $imageUrl = $tour->image ? $this->resolveImageUrl($tour->image) : null;
+                $mapImageUrl = $tour->map_image ? $this->resolveImageUrl($tour->map_image) : null;
+                $itineraryPdfUrl = $tour->itinerary_pdf ? $this->resolveImageUrl($tour->itinerary_pdf) : null;
 
-                $mapImageUrl = null;
-                if ($tour->map_image) {
-                    if (str_starts_with($tour->map_image, 'images/')) {
-                        $mapImageUrl = asset($tour->map_image);
-                    } else {
-                        $mapImageUrl = asset('storage/' . $tour->map_image);
-                    }
-                }
+                $gallery = $tour->images->map(fn($img) => $this->resolveImageUrl($img->image_path))->values()->all();
 
-                $itineraryPdfUrl = null;
-                if ($tour->itinerary_pdf) {
-                    if (str_starts_with($tour->itinerary_pdf, 'http://') || str_starts_with($tour->itinerary_pdf, 'https://')) {
-                        $itineraryPdfUrl = $tour->itinerary_pdf;
-                    } else {
-                        $itineraryPdfUrl = asset('storage/' . $tour->itinerary_pdf);
-                    }
-                }
+                $places = $tour->places->map(function ($place) {
+                    return [
+                        'id' => $place->id,
+                        'title' => $place->title,
+                        'slug' => $place->slug,
+                        'description' => $place->description,
+                        'image' => $place->image ? $this->resolveImageUrl($place->image) : null,
+                        'destination' => $place->destination ? [
+                            'id' => $place->destination->id,
+                            'title' => $place->destination->title,
+                            'slug' => $place->destination->slug,
+                        ] : null,
+                    ];
+                })->values()->all();
 
                 return [
                     'id' => $tour->id,
                     'title' => $tour->title,
                     'slug' => $tour->slug,
+                    'category' => $tour->category ? [
+                        'id' => $tour->category->id,
+                        'title' => $tour->category->title,
+                        'slug' => $tour->category->slug,
+                    ] : null,
                     'region' => $tour->region,
                     'description' => $tour->description,
                     'image' => $imageUrl,
@@ -53,6 +64,8 @@ class TourController extends Controller
                     'itinerary_pdf' => $itineraryPdfUrl,
                     'itinerary' => $tour->itinerary,
                     'highlights' => $tour->highlights,
+                    'gallery' => $gallery,
+                    'places' => $places,
                 ];
             });
 
@@ -61,44 +74,43 @@ class TourController extends Controller
 
     public function show($slug)
     {
-        $tour = Tour::where('slug', $slug)->first();
+        $tour = Tour::with(['category', 'images', 'places.destination'])->where('slug', $slug)->first();
 
         if (!$tour) {
             return response()->json(['message' => 'Tour not found'], 404);
         }
 
-        $imageUrl = null;
-        if ($tour->image) {
-            if (str_starts_with($tour->image, 'images/')) {
-                $imageUrl = asset($tour->image);
-            } else {
-                $imageUrl = asset('storage/' . $tour->image);
-            }
-        }
+        $imageUrl = $tour->image ? $this->resolveImageUrl($tour->image) : null;
+        $mapImageUrl = $tour->map_image ? $this->resolveImageUrl($tour->map_image) : null;
+        $itineraryPdfUrl = $tour->itinerary_pdf ? $this->resolveImageUrl($tour->itinerary_pdf) : null;
 
-        $mapImageUrl = null;
-        if ($tour->map_image) {
-            if (str_starts_with($tour->map_image, 'images/')) {
-                $mapImageUrl = asset($tour->map_image);
-            } else {
-                $mapImageUrl = asset('storage/' . $tour->map_image);
-            }
-        }
+        $gallery = $tour->images->map(fn($img) => $this->resolveImageUrl($img->image_path))->values()->all();
 
-        $itineraryPdfUrl = null;
-        if ($tour->itinerary_pdf) {
-            if (str_starts_with($tour->itinerary_pdf, 'http://') || str_starts_with($tour->itinerary_pdf, 'https://')) {
-                $itineraryPdfUrl = $tour->itinerary_pdf;
-            } else {
-                $itineraryPdfUrl = asset('storage/' . $tour->itinerary_pdf);
-            }
-        }
+        $places = $tour->places->map(function ($place) {
+            return [
+                'id' => $place->id,
+                'title' => $place->title,
+                'slug' => $place->slug,
+                'description' => $place->description,
+                'image' => $place->image ? $this->resolveImageUrl($place->image) : null,
+                'destination' => $place->destination ? [
+                    'id' => $place->destination->id,
+                    'title' => $place->destination->title,
+                    'slug' => $place->destination->slug,
+                ] : null,
+            ];
+        })->values()->all();
 
         return response()->json([
             'data' => [
                 'id' => $tour->id,
                 'title' => $tour->title,
                 'slug' => $tour->slug,
+                'category' => $tour->category ? [
+                    'id' => $tour->category->id,
+                    'title' => $tour->category->title,
+                    'slug' => $tour->category->slug,
+                ] : null,
                 'region' => $tour->region,
                 'description' => $tour->description,
                 'image' => $imageUrl,
@@ -108,6 +120,8 @@ class TourController extends Controller
                 'itinerary_pdf' => $itineraryPdfUrl,
                 'itinerary' => $tour->itinerary,
                 'highlights' => $tour->highlights,
+                'gallery' => $gallery,
+                'places' => $places,
             ]
         ]);
     }

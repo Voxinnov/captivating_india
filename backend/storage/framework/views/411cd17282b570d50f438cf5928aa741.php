@@ -39,8 +39,8 @@
                 </a>
 
                 <!-- About Us Dropdown -->
-                <div x-data="{ open: <?php echo json_encode(request()->is('admin/about-sections*'), 15, 512) ?> }">
-                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->is('admin/about-sections*') ? 'bg-gray-700' : ''); ?>">
+                <div x-data="{ open: <?php echo json_encode(request()->is('admin/about-sections*') || request()->is('admin/about-galleries*'), 15, 512) ?> }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->is('admin/about-sections*') || request()->is('admin/about-galleries*') ? 'bg-gray-700' : ''); ?>">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-info-circle"></i>
                             <span>About Us</span>
@@ -62,14 +62,18 @@
                                 'booking-gallery' => 'Booking Gallery',
                                 'general-info' => 'General Info',
                                 'general-info-gallery' => 'General Info Gallery',
-                                'theme-description' => 'Theme Description',
-                                'theme-gallery' => 'Theme Gallery',
+                                'theme-description' => 'Destination Description',
+                                'theme-gallery' => 'Destination Gallery',
                                 'tour-description' => 'Tour Description',
                                 'tour-gallery' => 'Tour Gallery',
                                 'activity-description' => 'Activity Description',
                                 'activity-gallery' => 'Activity Gallery',
                                 'hotel-description' => 'Hotel Description',
                                 'hotel-gallery' => 'Hotel Gallery',
+                                'gallery-description' => 'Gallery Description',
+                                'gallery-gallery' => 'Gallery Gallery',
+                                'contact-description' => 'Contact Description',
+                                'contact-gallery' => 'Contact Gallery',
                             ];
                         ?>
                         <?php $__currentLoopData = $aboutSubsections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -92,7 +96,7 @@
 
                 <a href="<?php echo e(route('admin.destinations.index')); ?>" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->routeIs('admin.destinations.*') ? 'bg-gray-700' : ''); ?>">
                     <i class="fas fa-map-marked-alt"></i>
-                    <span>Themes</span>
+                    <span>Destinations</span>
                 </a>
 
                 <a href="<?php echo e(route('admin.places.index')); ?>" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->routeIs('admin.places.*') ? 'bg-gray-700' : ''); ?>">
@@ -113,6 +117,11 @@
                 <a href="<?php echo e(route('admin.tours.index')); ?>" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->routeIs('admin.tours.*') ? 'bg-gray-700' : ''); ?>">
                     <i class="fas fa-route"></i>
                     <span>Tours</span>
+                </a>
+
+                <a href="<?php echo e(route('admin.tour-categories.index')); ?>" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->routeIs('admin.tour-categories.*') ? 'bg-gray-700' : ''); ?>">
+                    <i class="fas fa-tags"></i>
+                    <span>Tour Categories</span>
                 </a>
 
                 <a href="<?php echo e(route('admin.testimonials.index')); ?>" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 <?php echo e(request()->routeIs('admin.testimonials.*') ? 'bg-gray-700' : ''); ?>">

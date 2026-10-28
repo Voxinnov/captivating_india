@@ -48,7 +48,7 @@
         <div class="bg-white p-6 rounded-lg shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-600 text-sm">Themes</p>
+                    <p class="text-gray-600 text-sm">Destinations</p>
                     <p class="text-3xl font-bold mt-2"><?php echo e($stats['destinations']); ?></p>
                 </div>
                 <i class="fas fa-map-marker-alt text-4xl text-red-500"></i>

@@ -29,6 +29,14 @@
       "namedRegex": "^/activities/(?<nxtPslug>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/destinations/[slug]",
+      "regex": "^/destinations/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/destinations/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/gallery/[slug]",
       "regex": "^/gallery/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -43,6 +51,14 @@
         "nxtPslug": "nxtPslug"
       },
       "namedRegex": "^/hotels/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/places/[slug]",
+      "regex": "^/places/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/places/(?<nxtPslug>[^/]+?)(?:/)?$"
     },
     {
       "page": "/themes/[slug]",
@@ -103,6 +119,12 @@
       "regex": "^/contact(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/destinations",
+      "regex": "^/destinations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/destinations(?:/)?$"
     },
     {
       "page": "/gallery",

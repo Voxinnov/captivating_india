@@ -29,7 +29,7 @@ class DestinationController extends Controller
 
     public function show($slug)
     {
-        $destination = Destination::with(['activities.place', 'places'])->where('slug', $slug)->first();
+        $destination = Destination::with(['activities.place', 'places.activities', 'images'])->where('slug', $slug)->first();
 
         if (!$destination) {
             return response()->json(['message' => 'Destination not found'], 404);
@@ -42,12 +42,19 @@ class DestinationController extends Controller
                 'slug' => $destination->slug,
                 'description' => $destination->description,
                 'image' => $destination->image_url,
+                'gallery' => $destination->images->map(fn($img) => [
+                    'id' => $img->id,
+                    'url' => str_starts_with($img->image_path, 'images/') ? asset($img->image_path) : asset('storage/' . $img->image_path),
+                ]),
                 'long_description' => $destination->long_description,
                 'highlights' => $destination->highlights,
                 'places' => $destination->places->map(fn($p) => [
-                    'id' => $p->id,
-                    'title' => $p->title,
-                    'slug' => $p->slug,
+                    'id'               => $p->id,
+                    'title'            => $p->title,
+                    'slug'             => $p->slug,
+                    'description'      => $p->description,
+                    'image'            => $p->image_url,
+                    'activities_count' => $p->activities->count(),
                 ]),
                 'activities' => $destination->activities->map(fn($a) => [
                     'id' => $a->id,

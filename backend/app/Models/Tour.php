@@ -11,6 +11,7 @@ class Tour extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'tour_category_id',
         'title',
         'slug',
         'region',
@@ -36,9 +37,24 @@ class Tour extends Model
         ];
     }
 
+    public function category()
+    {
+        return $this->belongsTo(TourCategory::class, 'tour_category_id');
+    }
+
+    public function tourCategory()
+    {
+        return $this->belongsTo(TourCategory::class, 'tour_category_id');
+    }
+
     public function images()
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function places()
+    {
+        return $this->belongsToMany(Place::class, 'place_tour');
     }
 }
 

@@ -83,6 +83,42 @@
                 </div>
             </div>
 
+            <!-- Gallery Images -->
+            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <label class="block text-gray-700 text-sm font-bold mb-3">Gallery Images</label>
+
+                @if($activity->images && $activity->images->count() > 0)
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        @foreach($activity->images as $img)
+                            <div class="relative group border rounded bg-white p-2">
+                                <img src="{{ str_starts_with($img->image_path, 'images/') ? asset($img->image_path) : asset('storage/' . $img->image_path) }}"
+                                     alt="Gallery image"
+                                     class="h-24 w-full object-cover rounded">
+                                <div class="mt-2 text-right">
+                                    <button type="button"
+                                            onclick="if(confirm('Delete this gallery image?')) { document.getElementById('delete-activity-img-{{ $img->id }}').submit(); }"
+                                            class="bg-red-500 hover:bg-red-600 text-white text-xs px-2.5 py-1 rounded transition">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-gray-500 italic text-sm mb-4">No gallery images uploaded yet.</p>
+                @endif
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Upload New Gallery Images</label>
+                    <div class="border border-gray-300 rounded-md p-2 bg-white">
+                        <input type="file" name="images[]" id="images" multiple accept="image/*"
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">You can select multiple images at once (JPEG, PNG, JPG, WebP, max 2MB each).</p>
+                    @error('images.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="flex justify-end mt-8 border-t pt-6">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded shadow transition duration-200">
@@ -92,6 +128,16 @@
         </form>
     </div>
 </div>
+
+{{-- Hidden delete forms for gallery images (must be outside the main form) --}}
+@if($activity->images && $activity->images->count() > 0)
+    @foreach($activity->images as $img)
+        <form id="delete-activity-img-{{ $img->id }}" action="{{ route('admin.activities.images.destroy', $img->id) }}" method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
+@endif
 
 <script>
     $(document).ready(function() {

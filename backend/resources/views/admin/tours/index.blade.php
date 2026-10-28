@@ -3,12 +3,17 @@
 @section('title', 'Tours')
 
 @section('content')
-<div x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }} }">
+<div x-data="{ showModal: {{ ($errors ?? null)?->any() ? 'true' : 'false' }} }">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold">Tours</h1>
-        <button @click="showModal = true" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-            <i class="fas fa-plus mr-2"></i>Add New
-        </button>
+        <div class="flex gap-3">
+            <a href="{{ route('admin.tour-categories.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-4 py-2 rounded transition">
+                <i class="fas fa-tags mr-2"></i>Tour Categories
+            </a>
+            <button @click="showModal = true" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                <i class="fas fa-plus mr-2"></i>Add New
+            </button>
+        </div>
     </div>
 
     <!-- Modal Backdrop -->
@@ -28,10 +33,28 @@
                     </div>
                     <form action="{{ route('admin.tours.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="block font-bold mb-2">Title *</label>
                                 <input type="text" name="title" value="{{ old('title') }}" required class="w-full px-3 py-2 border rounded">
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block font-bold">Tour Category</label>
+                                    <a href="{{ route('admin.tour-categories.index') }}" target="_blank" class="text-xs text-blue-600 hover:underline">+ Add Category</a>
+                                </div>
+                                <select name="tour_category_id" class="w-full px-3 py-2 border rounded bg-white">
+                                    <option value="">-- Select Category --</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('tour_category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-2">Region (e.g. Southern India)</label>
+                                <input type="text" name="region" value="{{ old('region') }}" placeholder="e.g. Southern India" class="w-full px-3 py-2 border rounded">
                             </div>
                         </div>
 
@@ -77,6 +100,24 @@
                             <textarea name="highlights" rows="5" class="w-full px-3 py-2 border rounded" placeholder="Interact with master weavers..."></textarea>
                         </div>
 
+                        {{-- Places multi-select --}}
+                        <div class="mb-4 p-4 border rounded bg-gray-50">
+                            <label class="block font-bold mb-2 text-sm text-gray-700">Places Covered</label>
+                            <p class="text-xs text-gray-500 mb-2">Select places visited during this tour.</p>
+                            <select name="places[]" id="modal_places_select" multiple class="w-full border rounded px-3 py-2">
+                                @if(isset($places))
+                                    @php $grouped = $places->groupBy(fn($p) => $p->destination->title ?? 'Other') @endphp
+                                    @foreach($grouped as $destinationName => $group)
+                                        <optgroup label="{{ $destinationName }}">
+                                            @foreach($group as $place)
+                                                <option value="{{ $place->id }}">{{ $place->title }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="block font-bold mb-2">Featured Image *</label>
@@ -109,6 +150,30 @@
         </div>
     </div>
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        .select2-container { width: 100% !important; z-index: 99999; }
+        .select2-dropdown { z-index: 99999; }
+        .select2-container--default .select2-selection--multiple {
+            border-color: #d1d5db;
+            border-radius: 0.375rem;
+            padding: 4px 6px;
+            min-height: 42px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #3b82f6;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            padding: 2px 8px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff;
+            margin-right: 4px;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
             $('#modal_overview, #modal_more_info').summernote({
@@ -121,6 +186,13 @@
                     ['view', ['fullscreen', 'codeview']]
                 ]
             });
+
+            $('#modal_places_select').select2({
+                placeholder: 'Search and select places...',
+                allowClear: true,
+                closeOnSelect: false,
+                width: '100%'
+            });
         });
     </script>
 
@@ -129,15 +201,25 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Region</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($tours as $tour)
                     <tr>
-                        <td class="px-6 py-4">{{ $tour->title }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ $tour->slug }}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900">{{ $tour->title }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">
+                            @if($tour->category)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {{ $tour->category->title }}
+                                </span>
+                            @else
+                                <span class="text-gray-400 text-xs italic">Uncategorized</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ $tour->region ?? '—' }}</td>
                         <td class="px-6 py-4">
                             <a href="{{ route('admin.tours.edit', $tour) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
                             <form action="{{ route('admin.tours.destroy', $tour) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?')">

@@ -90,45 +90,11 @@ export default function HotelsSection() {
   return (
     <section 
       id="hotels" 
-      className="py-20 md:py-32 px-4 bg-muted/30 relative overflow-hidden"
+      className="py-16 md:py-24 px-4 bg-muted/30"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Animated Tourism Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Animated Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 animate-gradient-shift"></div>
-        
-        {/* Tourism-themed Floating Bubbles */}
-        <div className="absolute top-10 left-5 w-32 h-32 bg-primary/15 rounded-full border-2 border-primary/20 animate-bubble-float-1"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-primary/12 rounded-full border-2 border-primary/15 animate-bubble-float-2"></div>
-        <div className="absolute bottom-32 left-20 w-40 h-40 bg-primary/10 rounded-full border-2 border-primary/20 animate-bubble-float-3"></div>
-        <div className="absolute top-1/3 right-1/4 w-28 h-28 bg-primary/18 rounded-full border-2 border-primary/25 animate-bubble-float-4"></div>
-        <div className="absolute bottom-20 right-1/3 w-36 h-36 bg-primary/12 rounded-full border-2 border-primary/18 animate-bubble-float-5"></div>
-        <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-primary/15 rounded-full border-2 border-primary/20 animate-bubble-float-6"></div>
-        
-        {/* Concentric Circle Bubbles */}
-        <div className="absolute top-20 right-10 w-48 h-48 animate-bubble-float-7">
-          <div className="absolute inset-0 rounded-full border-2 border-primary/15"></div>
-          <div className="absolute inset-4 rounded-full border border-primary/10"></div>
-        </div>
-        <div className="absolute bottom-40 left-10 w-44 h-44 animate-bubble-float-8">
-          <div className="absolute inset-0 rounded-full border-2 border-primary/12"></div>
-          <div className="absolute inset-4 rounded-full border border-primary/8"></div>
-        </div>
-        
-        {/* Large Background Bubbles */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-float-slow"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/8 rounded-full blur-3xl animate-float-slow-reverse"></div>
-        
-        {/* Tourism Icons (Subtle) */}
-        <div className="absolute top-24 right-1/4 text-primary/10 animate-icon-float-1" style={{ fontSize: '3rem' }}>🏝️</div>
-        <div className="absolute bottom-32 left-1/4 text-primary/8 animate-icon-float-2" style={{ fontSize: '2.5rem' }}>🚤</div>
-        <div className="absolute top-1/2 right-10 text-primary/10 animate-icon-float-3" style={{ fontSize: '2rem' }}>🌴</div>
-        <div className="absolute bottom-24 right-1/3 text-primary/8 animate-icon-float-4" style={{ fontSize: '2.5rem' }}>✈️</div>
-      </div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-light mb-6 tracking-tight">HOTELS</h2>
         </div>

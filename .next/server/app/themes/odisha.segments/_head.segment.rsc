@@ -2,6 +2,6 @@
 2:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/247eb132b7f7b574.js"],"ViewportBoundary"]
 4:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/247eb132b7f7b574.js"],"MetadataBoundary"]
 5:"$Sreact.suspense"
-0:{"buildId":"QokNHjeMb9OsKdTUfPqsM","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"KT_iEaCN6K7u2oDiIQ-tU","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],null]}],"loading":null,"isPartial":false}
 3:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
-6:[["$","title","0",{"children":"Odisha - Captivating India"}],["$","meta","1",{"name":"description","content":"Discover the hidden tribal heritage and magnificent architecture of India's best kept secret."}],["$","meta","2",{"name":"generator","content":"v0.app"}]]
+6:[["$","title","0",{"children":"Captivating India - Travel All Seasons | Kerala's Leading Travel Agent"}],["$","meta","1",{"name":"description","content":"What started as an inspiration of a group of travel professionals to fill a huge gap in the Indian market for a reliable ground operator for holidays, Captivating India is now one of Kerala's leading Travel Agent."}],["$","meta","2",{"name":"generator","content":"v0.app"}]]

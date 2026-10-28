@@ -31,6 +31,16 @@ class Place extends Model
         return $this->morphMany(Image::class, 'imageable');
     }
 
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function tours()
+    {
+        return $this->belongsToMany(Tour::class, 'place_tour');
+    }
+
     public function getImageUrlAttribute()
     {
         if (!$this->image) {

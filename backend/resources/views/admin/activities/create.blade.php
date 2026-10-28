@@ -72,7 +72,9 @@
                 <!-- Gallery Images -->
                 <div>
                     <label for="images" class="block text-gray-700 text-sm font-bold mb-2">Gallery Images</label>
-                    <input type="file" name="images[]" id="images" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition">
+                    <input type="file" name="images[]" id="images" multiple accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition">
+                    <p class="text-xs text-gray-500 mt-1">You can select multiple images at once (JPEG, PNG, JPG, WebP, max 2MB each).</p>
+                    @error('images.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Order -->

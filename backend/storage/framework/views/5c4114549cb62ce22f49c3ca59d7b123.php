@@ -1,9 +1,9 @@
-<?php $__env->startSection('title', 'Themes'); ?>
+<?php $__env->startSection('title', 'Destinations'); ?>
 
 <?php $__env->startSection('content'); ?>
 <div x-data="{ showModal: <?php echo e($errors->any() ? 'true' : 'false'); ?> }">
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold">Themes</h1>
+        <h1 class="text-3xl font-bold">Destinations</h1>
         <button @click="showModal = true" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
             <i class="fas fa-plus mr-2"></i>Add New
         </button>
@@ -19,7 +19,7 @@
             <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-gray-900" id="modal-title">New Theme</h3>
+                        <h3 class="text-lg font-bold text-gray-900" id="modal-title">New Destination</h3>
                         <button @click="showModal = false" class="text-gray-400 hover:text-gray-500">
                             <i class="fas fa-times"></i>
                         </button>

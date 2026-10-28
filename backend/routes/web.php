@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\HomePageController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\Admin\TourCategoryController;
 use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\HotelController;
 use App\Http\Controllers\Admin\ActivityController;
@@ -67,7 +68,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('testimonials', TestimonialController::class);
 
         // Destinations
+        Route::delete('/destinations/images/{image}', [DestinationController::class, 'deleteImage'])->name('destinations.images.destroy');
         Route::resource('destinations', DestinationController::class);
+
+        // Tour Categories
+        Route::resource('tour-categories', TourCategoryController::class);
 
         // Tours
         Route::delete('/tours/images/{image}', [TourController::class, 'deleteImage'])->name('tours.images.destroy');
@@ -78,6 +83,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('hotels', HotelController::class);
 
         // Activities
+        Route::delete('/activities/images/{image}', [ActivityController::class, 'deleteImage'])->name('activities.images.destroy');
         Route::resource('activities', ActivityController::class);
 
         // Gallery

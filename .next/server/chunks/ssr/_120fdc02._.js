@@ -1,0 +1,3 @@
+module.exports=[70864,a=>{a.n(a.i(33290))},43619,a=>{a.n(a.i(79962))},13718,a=>{a.n(a.i(85523))},18198,a=>{a.n(a.i(45518))},62212,a=>{a.n(a.i(66114))},1487,a=>{"use strict";a.i(70396);var b=a.i(73727);async function c(){try{let a=await fetch("https://captivationgindia.bvox.in/api/v1/destinations");if(a.ok)return((await a.json()).data||[]).map(a=>({slug:a.slug}))}catch(a){console.error("Failed to generate static params for themes redirect:",a)}return[]}async function d({params:a}){let{slug:c}=await a;(0,b.redirect)(`/destinations/${c}`)}a.s(["default",()=>d,"generateStaticParams",()=>c])}];
+
+//# sourceMappingURL=_120fdc02._.js.map

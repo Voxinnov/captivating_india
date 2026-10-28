@@ -1,5 +1,6 @@
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
+import DynamicHeroSection from '@/components/dynamic-hero-section'
 import Link from 'next/link'
 
 async function getGalleryCategories() {
@@ -22,24 +23,11 @@ export default async function GalleryPage() {
       <Navigation />
 
       {/* Hero */}
-      <section className="relative overflow-hidden flex items-center min-h-[260px] md:min-h-[360px]">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/rithudmc-keralabackwaters-kumarakom-9085.jpg')" }}
-        />
-        <div className="absolute inset-0 bg-black/45" />
-
-        <div className="relative w-full py-16 md:py-20 lg:py-24">
-          <div className="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center text-center space-y-3">
-            <h1 className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/70">
-              Gallery
-            </h1>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white tracking-tight">
-              Image Gallery
-            </h2>
-          </div>
-        </div>
-      </section>
+      <DynamicHeroSection
+        galleryKey="gallery-gallery"
+        fallbackTitle="Image Gallery"
+        fallbackImage="/images/rithudmc-keralabackwaters-kumarakom-9085.jpg"
+      />
 
       {/* Category tiles – like the reference gallery grid */}
       <section className="py-10 md:py-14 px-4 bg-gradient-to-b from-muted/30 via-background to-muted/40">

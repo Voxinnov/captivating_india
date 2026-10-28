@@ -30,11 +30,17 @@ class ActivityController extends Controller
 
     public function show($slug)
     {
-        $activity = Activity::where('slug', $slug)->first();
+        $activity = Activity::with(['images', 'destination', 'place.destination'])->where('slug', $slug)->first();
 
         if (!$activity) {
             return response()->json(['message' => 'Activity not found'], 404);
         }
+
+        $gallery = $activity->images->map(function ($img) {
+            return str_starts_with($img->image_path, 'images/')
+                ? asset($img->image_path)
+                : asset('storage/' . $img->image_path);
+        })->values()->all();
 
         return response()->json([
             'data' => [
@@ -42,10 +48,12 @@ class ActivityController extends Controller
                 'title' => $activity->title,
                 'slug' => $activity->slug,
                 'theme' => $activity->destination ? $activity->destination->title : ($activity->place && $activity->place->destination ? $activity->place->destination->title : null),
+                'destination' => $activity->destination ? $activity->destination->title : ($activity->place && $activity->place->destination ? $activity->place->destination->title : null),
                 'location' => $activity->place ? $activity->place->title : null,
                 'description' => $activity->description,
                 'longDescription' => $activity->long_description,
                 'image' => $activity->image_url,
+                'gallery' => $gallery,
             ]
         ]);
     }

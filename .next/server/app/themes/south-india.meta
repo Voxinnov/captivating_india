@@ -1,1 +1,18 @@
-{"headers":{"x-nextjs-stale-time":"300","x-next-cache-tags":"_N_T_/layout,_N_T_/themes/layout,_N_T_/themes/[slug]/layout,_N_T_/themes/[slug]/page,_N_T_/themes/south-india"},"segmentPaths":["/_tree","/_full","/themes/$d$slug/__PAGE__","/themes/$d$slug","/themes","/_index","/_head"]}
+{
+  "status": 307,
+  "headers": {
+    "location": "/destinations/south-india",
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/themes/layout,_N_T_/themes/[slug]/layout,_N_T_/themes/[slug]/page,_N_T_/themes/south-india"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/themes/$d$slug/__PAGE__",
+    "/themes/$d$slug",
+    "/themes",
+    "/_index",
+    "/_head"
+  ]
+}

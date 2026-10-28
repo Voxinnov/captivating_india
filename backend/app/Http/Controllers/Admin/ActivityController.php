@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -61,6 +62,7 @@ class ActivityController extends Controller
     {
         $places = \App\Models\Place::all();
         $destinations = \App\Models\Destination::all();
+        $activity->load('images');
         return view('admin.activities.edit', compact('activity', 'places', 'destinations'));
     }
 
@@ -107,8 +109,23 @@ class ActivityController extends Controller
         if ($activity->image) {
             Storage::disk('public')->delete($activity->image);
         }
+        foreach ($activity->images as $image) {
+            if ($image->image_path) {
+                Storage::disk('public')->delete($image->image_path);
+            }
+            $image->delete();
+        }
         $activity->delete();
         return redirect()->route('admin.activities.index')->with('success', 'Activity deleted successfully.');
+    }
+
+    public function deleteImage(Image $image)
+    {
+        if ($image->image_path) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+        $image->delete();
+        return back()->with('success', 'Gallery image deleted successfully.');
     }
 }
 

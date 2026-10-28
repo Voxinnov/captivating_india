@@ -8,10 +8,52 @@
     <form action="{{ route('admin.tours.update', $tour) }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow">
         @csrf @method('PUT')
         <div class="mb-4"><label class="block font-bold mb-2">Title *</label><input type="text" name="title" value="{{ old('title', $tour->title) }}" required class="w-full px-3 py-2 border rounded"></div>
-        <div class="mb-4"><label class="block font-bold mb-2">Slug *</label><input type="text" name="slug" value="{{ old('slug', $tour->slug) }}" required class="w-full px-3 py-2 border rounded"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+                <label class="block font-bold mb-2">Slug *</label>
+                <input type="text" name="slug" value="{{ old('slug', $tour->slug) }}" required class="w-full px-3 py-2 border rounded">
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block font-bold">Tour Category</label>
+                    <a href="{{ route('admin.tour-categories.index') }}" target="_blank" class="text-xs text-blue-600 hover:underline">+ Add Category</a>
+                </div>
+                <select name="tour_category_id" class="w-full px-3 py-2 border rounded bg-white">
+                    <option value="">-- Select Category --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('tour_category_id', $tour->tour_category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->title }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block font-bold mb-2">Region (e.g. Tamil Nadu, Karnataka & Kerala)</label>
+                <input type="text" name="region" value="{{ old('region', $tour->region) }}" placeholder="e.g. Southern India" class="w-full px-3 py-2 border rounded">
+            </div>
+        </div>
 
         <div class="mb-4"><label class="block font-bold mb-2">Image</label>@if($tour->image)<img src="{{ str_starts_with($tour->image, 'images/') ? asset($tour->image) : asset('storage/' . $tour->image) }}" class="mb-2 h-32">@endif<input type="file" name="image" accept="image/*" class="w-full px-3 py-2 border rounded"></div>
         <div class="mb-4"><label class="block font-bold mb-2">Map Image</label>@if($tour->map_image)<img src="{{ str_starts_with($tour->map_image, 'images/') ? asset($tour->map_image) : asset('storage/' . $tour->map_image) }}" class="mb-2 h-32">@endif<input type="file" name="map_image" accept="image/*" class="w-full px-3 py-2 border rounded"></div>
+
+        {{-- Places multi-select --}}
+        <div class="mb-6 p-4 border rounded bg-gray-50">
+            <label class="block font-bold mb-2 text-base">Places Covered</label>
+            <p class="text-sm text-gray-500 mb-3">Select all places visited during this tour. These will be shown on the tour detail page.</p>
+            <select name="places[]" id="places-select" multiple class="w-full border rounded px-3 py-2">
+                @php $grouped = $places->groupBy(fn($p) => $p->destination->title ?? 'Other') @endphp
+                @foreach($grouped as $destinationName => $group)
+                    <optgroup label="{{ $destinationName }}">
+                        @foreach($group as $place)
+                            <option value="{{ $place->id }}"
+                                {{ in_array($place->id, $selectedPlaceIds ?? []) ? 'selected' : '' }}>
+                                {{ $place->title }}
+                            </option>
+                        @endforeach
+                    </optgroup>
+                @endforeach
+            </select>
+        </div>
 
         <div class="mb-6 p-4 border rounded bg-gray-50">
             <label class="block font-bold mb-3 text-lg">Tour Gallery Images</label>
@@ -93,6 +135,30 @@
     @endif
 </div>
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+    .select2-container { width: 100% !important; }
+    .select2-container--default .select2-selection--multiple {
+        border-color: #d1d5db;
+        border-radius: 0.375rem;
+        padding: 4px 6px;
+        min-height: 44px;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #3b82f6;
+        border: none;
+        color: #fff;
+        border-radius: 4px;
+        padding: 2px 8px;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #fff;
+        margin-right: 4px;
+    }
+</style>
+
 <script>
     $(document).ready(function() {
         $('#overview').summernote({
@@ -108,6 +174,13 @@
                 ['insert', ['link', 'picture', 'video']],
                 ['view', ['fullscreen', 'codeview', 'help']]
             ]
+        });
+
+        $('#places-select').select2({
+            placeholder: 'Search and select places...',
+            allowClear: true,
+            closeOnSelect: false,
+            width: '100%',
         });
     });
 </script>

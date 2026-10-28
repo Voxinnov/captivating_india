@@ -20,8 +20,6 @@ class SiteSettingController extends Controller
         $settings = $request->except(['_token', '_method']);
 
         foreach ($settings as $key => $value) {
-            $type = 'text';
-            
             // Handle file uploads
             if ($request->hasFile($key)) {
                 $setting = SiteSetting::where('key', $key)->first();
@@ -29,10 +27,16 @@ class SiteSettingController extends Controller
                     Storage::disk('public')->delete($setting->value);
                 }
                 $value = $request->file($key)->store('settings', 'public');
-                $type = 'image';
+                SiteSetting::setValue($key, $value, 'image');
+                continue;
             }
 
-            SiteSetting::setValue($key, $value, $type);
+            // Skip file fields if no new file was uploaded
+            if ($key === 'site_logo' || str_contains($key, 'logo') || str_contains($key, 'image')) {
+                continue;
+            }
+
+            SiteSetting::setValue($key, $value, 'text');
         }
 
         return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully.');

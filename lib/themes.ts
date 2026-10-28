@@ -6,7 +6,14 @@ export interface Theme {
   image: string
   long_description?: string
   highlights?: string[]
-  places?: { id: number; title: string; slug: string }[]
+  places?: {
+    id: number
+    title: string
+    slug: string
+    description?: string
+    image?: string
+    activities_count?: number
+  }[]
   activities?: {
     id: number
     title: string

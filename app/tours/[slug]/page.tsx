@@ -3,6 +3,7 @@ import Footer from '@/components/footer'
 import { notFound } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatHtmlContent } from '@/lib/utils'
+import PdfViewer from '@/components/pdf-viewer'
 
 type TourDetailPageProps = {
   params: Promise<{
@@ -16,7 +17,7 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
   let tour = null;
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/tours/${slug}`, {
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: 300 } // Cache for 5 minutes
     })
     if (response.ok) {
       const result = await response.json()
@@ -83,29 +84,26 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
             </TabsContent>
 
             <TabsContent value="itinerary" className="leading-relaxed">
-              <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-4">
-                <h2 className="text-base md:text-lg font-semibold text-foreground mb-4">
-                  Itinerary
-                </h2>
-
-                {tour.itinerary_type === 'pdf' && tour.itinerary_pdf ? (
-                  <div className="relative w-full h-[600px] md:h-[800px] rounded-xl overflow-hidden border border-border/60 bg-muted select-none">
-                    <iframe
-                      src={`${tour.itinerary_pdf}#toolbar=0&navpanes=0&scrollbar=1`}
-                      className="w-full h-[calc(100%+56px)] -mt-[56px] border-0"
-                      title={`${tour.title} Itinerary PDF`}
-                    />
-                  </div>
-                ) : tour.itinerary && tour.itinerary.length > 0 ? (
-                  <div className="space-y-2 text-justify">
-                    {tour.itinerary.map((day: string) => (
-                      <p key={day.slice(0, 40)}>{day}</p>
-                    ))}
-                  </div>
-                ) : (
-                  <p>Detailed day‑by‑day itinerary information can be provided on request.</p>
-                )}
-              </div>
+              {tour.itinerary_type === 'pdf' && tour.itinerary_pdf ? (
+                <div className="w-full">
+                  <PdfViewer url={tour.itinerary_pdf} title={tour.title} />
+                </div>
+              ) : (
+                <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-4">
+                  <h2 className="text-base md:text-lg font-semibold text-foreground mb-4">
+                    Itinerary
+                  </h2>
+                  {tour.itinerary && tour.itinerary.length > 0 ? (
+                    <div className="space-y-2 text-justify">
+                      {tour.itinerary.map((day: string) => (
+                        <p key={day.slice(0, 40)}>{day}</p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>Detailed day‑by‑day itinerary information can be provided on request.</p>
+                  )}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="highlights" className="leading-relaxed">
@@ -126,19 +124,23 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
             <TabsContent value="gallery" className="leading-relaxed">
               <div className="bg-card rounded-2xl shadow-sm border border-border/60 p-6 md:p-8 space-y-6">
                 <h2 className="text-base md:text-lg font-semibold text-foreground mb-2">Gallery</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {['/images/rithu-dmc-about-1430.jpg', '/images/rithudmc-keralabackwaters-kumarakom-2808.jpg', '/images/rithudmc-keralabackwaters-kumarakom-9085.jpg', '/images/29-05-2021-12-37-36-Mararikulam---1.jpg', '/images/odishatribaltourkeralatravelagent-8565.jpg', '/images/29-05-2021-12-37-36-Meesapulimalai-trek.jpg'].map(
-                    (src) => (
+                {tour.gallery && tour.gallery.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {tour.gallery.map((src: string, index: number) => (
                       <div key={src} className="overflow-hidden rounded-lg">
                         <img
                           src={src}
-                          alt="Tour gallery"
+                          alt={`${tour.title} gallery image ${index + 1}`}
                           className="h-32 md:h-40 w-full object-cover hover:scale-105 transition-transform duration-500"
                         />
                       </div>
-                    ),
-                  )}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Gallery images for this tour will be available soon.
+                  </p>
+                )}
               </div>
             </TabsContent>
 

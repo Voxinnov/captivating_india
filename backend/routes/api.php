@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AboutGalleryController;
 use App\Http\Controllers\Api\AboutSectionController;
 use App\Http\Controllers\Api\SliderController;
 use App\Http\Controllers\Api\ContactMessageController;
+use App\Http\Controllers\Api\PlaceController;
 use Illuminate\Support\Facades\Route;
 
 // Public API Routes (No Authentication Required)
@@ -34,7 +35,12 @@ Route::prefix('v1')->group(function () {
     Route::get('/destinations', [DestinationController::class, 'index']);
     Route::get('/destinations/{slug}', [DestinationController::class, 'show']);
 
+    // Places
+    Route::get('/places', [PlaceController::class, 'index']);
+    Route::get('/places/{slug}', [PlaceController::class, 'show']);
+
     // Tours
+    Route::get('/tour-categories', [\App\Http\Controllers\Api\TourCategoryController::class, 'index']);
     Route::get('/tours', [TourController::class, 'index']);
     Route::get('/tours/{slug}', [TourController::class, 'show']);
 

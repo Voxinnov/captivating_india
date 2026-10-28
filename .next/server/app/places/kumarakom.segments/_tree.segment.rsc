@@ -1,0 +1,3 @@
+:HL["/_next/static/chunks/6d33d6ef37b23bf4.css","style"]
+:HL["https://captivationgindia.bvox.in/storage/activities/HCZTXJOFHSk5L1jCZvqfQXeeiuEPhsIeHGlZ3Iuf.jpg","image"]
+0:{"buildId":"KT_iEaCN6K7u2oDiIQ-tU","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"places","paramType":null,"paramKey":"places","hasRuntimePrefetch":false,"slots":{"children":{"name":"slug","paramType":"d","paramKey":"kumarakom","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}

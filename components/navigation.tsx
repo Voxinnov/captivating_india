@@ -1,16 +1,30 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu, X, Mail } from 'lucide-react'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const [contactEmail, setContactEmail] = useState('info@captivatingindia.co.uk')
+  const [siteLogo, setSiteLogo] = useState('/logo.png')
+  const [siteName, setSiteName] = useState('Captivating India')
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://captivationgindia.bvox.in'}/api/v1/settings`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json?.data?.contact_email) setContactEmail(json.data.contact_email)
+        if (json?.data?.site_logo) setSiteLogo(json.data.site_logo)
+        if (json?.data?.site_name) setSiteName(json.data.site_name)
+      })
+      .catch(() => {})
+  }, [])
 
   const links = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/themes', label: 'Destinations' },
+    { href: '/destinations', label: 'Destinations' },
     { href: '/tours', label: 'Tours' },
     { href: '/hotels', label: 'Hotels' },
     { href: '/gallery', label: 'Gallery' },
@@ -22,10 +36,10 @@ export default function Navigation() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 md:h-24">
           {/* Logo */}
-          <Link href="#" className="flex items-center group">
+          <Link href="/" className="flex items-center group">
             <img 
-              src="/logo.png" 
-              alt="Captivating India Logo" 
+              src={siteLogo} 
+              alt={`${siteName} Logo`} 
               className="h-16 w-auto md:h-20 lg:h-24 object-contain"
             />
           </Link>
@@ -47,10 +61,10 @@ export default function Navigation() {
           <div className="hidden lg:flex items-center gap-2 text-white">
             <Mail size={18} className="text-white" />
             <a 
-              href="mailto:info@captivatingindia.co.uk" 
+              href={`mailto:${contactEmail}`} 
               className="text-xs md:text-sm font-medium tracking-wider hover:text-primary transition-colors"
             >
-              info@captivatingindia.co.uk
+              {contactEmail}
             </a>
           </div>
 
@@ -81,11 +95,11 @@ export default function Navigation() {
               <div className="flex items-center gap-2 text-white pt-2 border-t border-white/20">
                 <Mail size={18} />
                 <a 
-                  href="mailto:info@captivatingindia.co.uk" 
+                  href={`mailto:${contactEmail}`} 
                   className="text-xs font-medium tracking-wider hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
-                  info@captivatingindia.co.uk
+                  {contactEmail}
                 </a>
               </div>
             </div>
